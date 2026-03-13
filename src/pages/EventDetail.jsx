@@ -63,6 +63,14 @@ function EventDetail() {
         </button>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          {event.image_url && (
+            <img
+              src={event.image_url}
+              alt={event.title}
+              className="w-full h-full object-cover rounded-xl mt-4 mb-4"
+            />
+          )}
+
           {/* Badge type */}
           <span
             className={`text-xs font-semibold px-3 py-1 rounded-full ${typeColors[event.type] || "bg-gray-100 text-gray-700"}`}

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { useEnums } from "../hooks/useEnums";
+import ImageUpload from "../components/ImageUpload";
 
 function Admin() {
   const navigate = useNavigate();
@@ -248,6 +249,11 @@ function Admin() {
               </button>
             </div>
           )}
+
+          {/* Image */}
+          <ImageUpload
+            onUpload={(url) => setForm({ ...form, image_url: url })}
+          />
 
           <button
             onClick={handleSubmit}

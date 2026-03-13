@@ -18,6 +18,13 @@ function EventCard({ event, onClick }) {
       onClick={() => onClick(event.id)}
       className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-3 cursor-pointer hover:shadow-md transition-shadow"
     >
+      {event.image_url && (
+        <img
+          src={event.image_url}
+          alt={event.title}
+          className="w-full h-40 object-cover rounded-xl mb-3"
+        />
+      )}
       <span
         className={`text-xs font-semibold px-2 py-1 rounded-full ${typeStyle}`}
       >
