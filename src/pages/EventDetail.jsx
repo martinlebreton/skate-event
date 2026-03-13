@@ -85,7 +85,9 @@ function EventDetail() {
           <div className="mt-4 space-y-2">
             <p className="text-gray-600">📅 {formattedDate}</p>
             <p className="text-gray-600">📍 {event.location}</p>
-            <p className="text-gray-600">🗺️ {event.region}</p>
+            <p className="text-gray-600">
+              {event.ville} - {event.region}
+            </p>
           </div>
 
           {event.description && (
