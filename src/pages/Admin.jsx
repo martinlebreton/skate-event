@@ -4,16 +4,25 @@ import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { useEnums } from "../hooks/useEnums";
 import ImageUpload from "../components/ImageUpload";
+import OrganisateurForm from "../components/OrganisateurForm";
 
-// Formulaire réutilisable pour création ET modification
-function EventForm({ initial, onSubmit, onCancel, regions, types }) {
+// ── Formulaire event ──────────────────────────────────────
+function EventForm({
+  initial,
+  onSubmit,
+  onCancel,
+  regions,
+  types,
+  organisateurs,
+}) {
   const [form, setForm] = useState(initial);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   }
 
   async function handleSubmit() {
@@ -21,7 +30,6 @@ function EventForm({ initial, onSubmit, onCancel, regions, types }) {
     if (
       !form.title ||
       !form.date ||
-      !form.ville ||
       !form.location ||
       !form.region ||
       !form.type
@@ -36,22 +44,31 @@ function EventForm({ initial, onSubmit, onCancel, regions, types }) {
     setLoading(false);
   }
 
+  const inputClass =
+    "w-full border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500";
+  const labelClass =
+    "block text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-1";
+
   if (success)
     return (
-      <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-        <p className="text-green-700 font-medium mb-3">
+      <div className="bg-teal-50 dark:bg-teal-950 border border-teal-200 dark:border-teal-800 rounded-xl p-6 text-center">
+        <p className="text-teal-700 dark:text-teal-400 font-medium mb-3">
           ✅ Événement sauvegardé !
         </p>
-        <button onClick={onCancel} className="text-blue-600 text-sm underline">
+        <button
+          onClick={onCancel}
+          className="text-teal-600 dark:text-teal-400 text-sm underline"
+        >
           Retour à la liste
         </button>
       </div>
     );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 space-y-4">
+      {/* Titre */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className={labelClass}>
           Titre <span className="text-red-500">*</span>
         </label>
         <input
@@ -60,53 +77,52 @@ function EventForm({ initial, onSubmit, onCancel, regions, types }) {
           value={form.title}
           onChange={handleChange}
           placeholder="Ex: Street Session Paris"
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={inputClass}
         />
       </div>
 
+      {/* Description */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Description
-        </label>
+        <label className={labelClass}>Description</label>
         <textarea
           name="description"
-          value={form.description}
+          value={form.description || ""}
           onChange={handleChange}
           placeholder="Décris l'événement..."
           rows={3}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className={`${inputClass} resize-none`}
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Date <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="datetime-local"
-          name="date"
-          value={form.date ? form.date.slice(0, 16) : ""}
-          onChange={handleChange}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      {/* Date début + Date fin */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className={labelClass}>
+            Début <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="datetime-local"
+            name="date"
+            value={form.date ? form.date.slice(0, 16) : ""}
+            onChange={handleChange}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Fin</label>
+          <input
+            type="datetime-local"
+            name="date_fin"
+            value={form.date_fin ? form.date_fin.slice(0, 16) : ""}
+            onChange={handleChange}
+            className={inputClass}
+          />
+        </div>
       </div>
 
+      {/* Lieu */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Ville <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          name="ville"
-          value={form.ville}
-          onChange={handleChange}
-          placeholder="Ex: Paris, Milan, Beaupréau"
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className={labelClass}>
           Lieu <span className="text-red-500">*</span>
         </label>
         <input
@@ -114,78 +130,151 @@ function EventForm({ initial, onSubmit, onCancel, regions, types }) {
           name="location"
           value={form.location}
           onChange={handleChange}
-          placeholder="Ex: Skatepark Trocadéro, Bowl de Tanchet"
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Ex: Skatepark Trocadéro"
+          className={inputClass}
         />
       </div>
 
+      {/* Ville */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Région <span className="text-red-500">*</span>
-        </label>
-        <select
-          name="region"
-          value={form.region}
+        <label className={labelClass}>Ville</label>
+        <input
+          type="text"
+          name="ville"
+          value={form.ville || ""}
           onChange={handleChange}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Ex: Paris"
+          className={inputClass}
+        />
+      </div>
+
+      {/* Région + Type */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className={labelClass}>
+            Région <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="region"
+            value={form.region}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="">Sélectionne</option>
+            {regions.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}>
+            Type <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="type"
+            value={form.type}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="">Sélectionne</option>
+            {types.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Organisateur */}
+      <div>
+        <label className={labelClass}>Organisateur</label>
+        <select
+          name="organisateur_id"
+          value={form.organisateur_id || ""}
+          onChange={handleChange}
+          className={inputClass}
         >
-          <option value="">Sélectionne une région</option>
-          {regions.map((region) => (
-            <option key={region} value={region}>
-              {region}
+          <option value="">Aucun organisateur</option>
+          {organisateurs.map((o) => (
+            <option key={o.id} value={o.id}>
+              {o.nom}
             </option>
           ))}
         </select>
       </div>
 
+      {/* Infos pratiques */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Type <span className="text-red-500">*</span>
-        </label>
-        <select
-          name="type"
-          value={form.type}
-          onChange={handleChange}
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Sélectionne un type</option>
-          {types.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
+        <label className={labelClass}>Infos pratiques</label>
+        <div className="grid grid-cols-2 gap-2 mt-2">
+          {[
+            { name: "infos_bar", label: "🍺 Bar" },
+            { name: "infos_restauration", label: "🍔 Restauration" },
+            { name: "infos_parking", label: "🅿️ Parking" },
+            { name: "infos_sanitaire", label: "🚻 Sanitaires" },
+          ].map(({ name, label }) => (
+            <label
+              key={name}
+              className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                name={name}
+                checked={!!form[name]}
+                onChange={handleChange}
+                className="w-4 h-4 accent-teal-600"
+              />
+              {label}
+            </label>
           ))}
-        </select>
+        </div>
+      </div>
+
+      {/* Infos complémentaires */}
+      <div>
+        <label className={labelClass}>Infos complémentaires</label>
+        <textarea
+          name="infos_complementaires"
+          value={form.infos_complementaires || ""}
+          onChange={handleChange}
+          placeholder="Autres informations utiles..."
+          rows={2}
+          className={`${inputClass} resize-none`}
+        />
       </div>
 
       {/* Image actuelle */}
       {form.image_url && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Image actuelle
-          </label>
+          <label className={labelClass}>Image actuelle</label>
           <img
             src={form.image_url}
-            alt="Image actuelle"
-            className="w-full h-40 object-cover rounded-xl"
+            alt="Image"
+            className="w-full rounded-xl object-cover border border-gray-200 dark:border-slate-700"
+            style={{ aspectRatio: "4/5" }}
           />
         </div>
       )}
 
+      {/* Upload image */}
       <ImageUpload onUpload={(url) => setForm({ ...form, image_url: url })} />
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 pt-2">
         <button
           onClick={onCancel}
-          className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-3 text-sm font-semibold hover:bg-gray-50 transition-colors"
+          className="flex-1 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 rounded-xl py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
         >
           Annuler
         </button>
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="flex-1 bg-blue-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="flex-1 bg-teal-600 dark:bg-teal-500 text-white rounded-xl py-3 text-sm font-semibold hover:bg-teal-700 transition-colors disabled:opacity-50"
         >
           {loading ? "Sauvegarde..." : "Sauvegarder"}
         </button>
@@ -194,48 +283,67 @@ function EventForm({ initial, onSubmit, onCancel, regions, types }) {
   );
 }
 
-// Formulaire vide pour la création
-const EMPTY_FORM = {
+// ── Formulaire event vide ─────────────────────────────────
+const EMPTY_EVENT = {
   title: "",
   description: "",
   date: "",
-  ville: "",
+  date_fin: "",
   location: "",
+  ville: "",
   region: "",
   type: "",
+  organisateur_id: "",
   image_url: "",
+  infos_bar: false,
+  infos_restauration: false,
+  infos_parking: false,
+  infos_sanitaire: false,
+  infos_complementaires: "",
 };
 
+// ── Page Admin ────────────────────────────────────────────
 function Admin() {
   const navigate = useNavigate();
   const { user, signIn, signOut } = useAuth();
   const { regions, types } = useEnums();
 
-  // Mode actuel : 'list', 'create', ou 'edit'
+  const [tab, setTab] = useState("events");
   const [mode, setMode] = useState("list");
   const [events, setEvents] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [organisateurs, setOrganisateurs] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [loadingData, setLoadingData] = useState(true);
 
-  // Login
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
   useEffect(() => {
-    if (user) fetchEvents();
+    if (user) {
+      fetchEvents();
+      fetchOrganisateurs();
+    }
   }, [user]);
 
   async function fetchEvents() {
-    setLoadingEvents(true);
-    const { data, error } = await supabase
+    setLoadingData(true);
+    const { data } = await supabase
       .from("events")
-      .select("*")
+      .select("*, organisateurs(nom)")
       .order("date", { ascending: true });
-    if (!error) setEvents(data);
-    setLoadingEvents(false);
+    if (data) setEvents(data);
+    setLoadingData(false);
+  }
+
+  async function fetchOrganisateurs() {
+    const { data } = await supabase
+      .from("organisateurs")
+      .select("*")
+      .order("nom", { ascending: true });
+    if (data) setOrganisateurs(data);
   }
 
   async function handleLogin() {
@@ -246,28 +354,61 @@ function Admin() {
     setLoginLoading(false);
   }
 
-  async function handleCreate(form) {
-    const { error } = await supabase.from("events").insert([form]);
+  async function handleCreateEvent(form) {
+    const { error } = await supabase.from("events").insert([
+      {
+        ...form,
+        organisateur_id: form.organisateur_id || null,
+      },
+    ]);
     if (!error) fetchEvents();
     return error;
   }
 
-  async function handleUpdate(form) {
+  async function handleUpdateEvent(form) {
     const { error } = await supabase
       .from("events")
-      .update(form)
-      .eq("id", selectedEvent.id);
+      .update({
+        ...form,
+        organisateur_id: form.organisateur_id || null,
+      })
+      .eq("id", selected.id);
     if (!error) fetchEvents();
     return error;
   }
 
-  async function handleDelete(id) {
-    await supabase.from("events").delete().eq("id", id);
-    setDeleteConfirm(null);
-    fetchEvents();
+  async function handleCreateOrg(form) {
+    const { error } = await supabase.from("organisateurs").insert([
+      {
+        ...form,
+        region: form.region || null,
+      },
+    ]);
+    if (!error) fetchOrganisateurs();
+    return error;
   }
 
-  // Formate la date pour l'affichage
+  async function handleUpdateOrg(form) {
+    const { error } = await supabase
+      .from("organisateurs")
+      .update({
+        ...form,
+        region: form.region || null,
+      })
+      .eq("id", selected.id);
+    if (!error) fetchOrganisateurs();
+    return error;
+  }
+
+  async function handleDelete() {
+    if (!deleteConfirm) return;
+    const table = deleteConfirm.type === "event" ? "events" : "organisateurs";
+    await supabase.from(table).delete().eq("id", deleteConfirm.item.id);
+    setDeleteConfirm(null);
+    if (deleteConfirm.type === "event") fetchEvents();
+    else fetchOrganisateurs();
+  }
+
   function formatDate(date) {
     return new Date(date).toLocaleDateString("fr-FR", {
       day: "numeric",
@@ -276,20 +417,27 @@ function Admin() {
     });
   }
 
-  // --- Écran de connexion ---
-  if (!user) {
+  const inputClass =
+    "w-full border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500";
+
+  // ── Écran login ──
+  if (!user)
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-sm">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">🔒 Admin</h1>
-          <p className="text-gray-500 text-sm mb-6">Accès réservé</p>
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center px-4">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-8 w-full max-w-sm">
+          <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-slate-100 mb-1">
+            🔒 Admin
+          </h1>
+          <p className="text-sm text-gray-400 dark:text-slate-500 mb-6">
+            Accès réservé
+          </p>
           <div className="space-y-3">
             <input
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             />
             <input
               type="password"
@@ -297,7 +445,7 @@ function Admin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             />
           </div>
           {loginError && (
@@ -306,147 +454,282 @@ function Admin() {
           <button
             onClick={handleLogin}
             disabled={loginLoading}
-            className="w-full bg-blue-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-blue-700 transition-colors mt-4 disabled:opacity-50"
+            className="w-full bg-teal-600 text-white rounded-xl py-3 text-sm font-semibold mt-4 hover:bg-teal-700 transition-colors disabled:opacity-50"
           >
             {loginLoading ? "Connexion..." : "Se connecter"}
           </button>
         </div>
       </div>
     );
-  }
 
-  // --- Page admin ---
+  // ── Page admin ──
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto px-4 pt-8 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 bg-hatch">
+      <div className="max-w-lg mx-auto px-4 pt-8 pb-28">
         {/* Header */}
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-bold text-gray-900">⚙️ Admin</h1>
-          <button onClick={signOut} className="text-sm text-red-400">
+        <div className="flex items-center justify-between mb-1">
+          <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-slate-100">
+            ⚙️ Admin
+          </h1>
+          <button
+            onClick={signOut}
+            className="text-sm text-red-400 hover:text-red-500"
+          >
             Déconnexion
           </button>
         </div>
-        <p className="text-xs text-gray-400 mb-6">{user.email}</p>
+        <p className="text-xs text-gray-400 dark:text-slate-600 mb-6">
+          {user.email}
+        </p>
 
-        {/* Onglets */}
-        <div className="flex gap-2 mb-6">
+        {/* Onglets principaux */}
+        <div className="flex gap-2 mb-4">
           {[
-            { key: "list", label: "📋 Liste" },
-            { key: "create", label: "➕ Créer" },
-          ].map((tab) => (
+            { key: "events", label: "🛹 Events" },
+            { key: "organisateurs", label: "🏢 Organisateurs" },
+          ].map((t) => (
             <button
-              key={tab.key}
-              onClick={() => setMode(tab.key)}
+              key={t.key}
+              onClick={() => {
+                setTab(t.key);
+                setMode("list");
+              }}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                mode === tab.key
-                  ? "bg-blue-600 text-white"
-                  : "bg-white border border-gray-200 text-gray-600"
+                tab === t.key
+                  ? "bg-teal-600 dark:bg-teal-500 text-white"
+                  : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400"
               }`}
             >
-              {tab.label}
+              {t.label}
             </button>
           ))}
         </div>
 
-        {/* Mode Liste */}
-        {mode === "list" && (
-          <div className="space-y-3">
-            {loadingEvents && (
-              <p className="text-center text-gray-400">Chargement...</p>
-            )}
-            {!loadingEvents && events.length === 0 && (
-              <p className="text-center text-gray-400">Aucun événement.</p>
-            )}
-            {events.map((event) => (
-              <div
-                key={event.id}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4"
+        {/* Sous-onglets Liste / Créer */}
+        {mode !== "edit" && (
+          <div className="flex gap-2 mb-6">
+            {[
+              { key: "list", label: "📋 Liste" },
+              { key: "create", label: "➕ Créer" },
+            ].map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setMode(t.key)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                  mode === t.key
+                    ? "bg-gray-900 dark:bg-slate-100 text-white dark:text-slate-900"
+                    : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400"
+                }`}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 truncate">
-                      {event.title}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      📅 {formatDate(event.date)} · {event.type} ·{" "}
-                      {event.region}
-                    </p>
-                  </div>
-                  <div className="flex gap-2 flex-shrink-0">
-                    <button
-                      onClick={() => {
-                        setSelectedEvent(event);
-                        setMode("edit");
-                      }}
-                      className="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg font-medium hover:bg-blue-100 transition-colors"
-                    >
-                      Modifier
-                    </button>
-                    <button
-                      onClick={() => setDeleteConfirm(event)}
-                      className="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 transition-colors"
-                    >
-                      Supprimer
-                    </button>
-                  </div>
-                </div>
-              </div>
+                {t.label}
+              </button>
             ))}
           </div>
         )}
 
-        {/* Mode Créer */}
-        {mode === "create" && (
-          <EventForm
-            initial={EMPTY_FORM}
-            onSubmit={handleCreate}
-            onCancel={() => setMode("list")}
-            regions={regions}
-            types={types}
-          />
-        )}
-
-        {/* Mode Modifier */}
-        {mode === "edit" && selectedEvent && (
+        {/* ── EVENTS ── */}
+        {tab === "events" && (
           <>
-            <button
-              onClick={() => setMode("list")}
-              className="flex items-center gap-1 text-blue-600 text-sm mb-4"
-            >
-              ← Retour à la liste
-            </button>
-            <EventForm
-              initial={selectedEvent}
-              onSubmit={handleUpdate}
-              onCancel={() => setMode("list")}
-              regions={regions}
-              types={types}
-            />
+            {mode === "list" && (
+              <div className="space-y-3">
+                {loadingData && (
+                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
+                    Chargement...
+                  </p>
+                )}
+                {!loadingData && events.length === 0 && (
+                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
+                    Aucun événement.
+                  </p>
+                )}
+                {events.map((event) => (
+                  <div
+                    key={event.id}
+                    className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-gray-900 dark:text-slate-100 truncate text-sm">
+                          {event.title}
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
+                          📅 {formatDate(event.date)} · {event.type} ·{" "}
+                          {event.region}
+                        </p>
+                        {event.organisateurs && (
+                          <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
+                            🏢 {event.organisateurs.nom}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <button
+                          onClick={() => {
+                            setSelected(event);
+                            setMode("edit");
+                          }}
+                          className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() =>
+                            setDeleteConfirm({ type: "event", item: event })
+                          }
+                          className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {mode === "create" && (
+              <EventForm
+                initial={EMPTY_EVENT}
+                onSubmit={handleCreateEvent}
+                onCancel={() => setMode("list")}
+                regions={regions}
+                types={types}
+                organisateurs={organisateurs}
+              />
+            )}
+
+            {mode === "edit" && selected && (
+              <>
+                <button
+                  onClick={() => setMode("list")}
+                  className="flex items-center gap-1 text-teal-600 dark:text-teal-400 text-sm mb-4"
+                >
+                  ← Retour à la liste
+                </button>
+                <EventForm
+                  initial={selected}
+                  onSubmit={handleUpdateEvent}
+                  onCancel={() => setMode("list")}
+                  regions={regions}
+                  types={types}
+                  organisateurs={organisateurs}
+                />
+              </>
+            )}
           </>
         )}
 
-        {/* Modal confirmation suppression */}
+        {/* ── ORGANISATEURS ── */}
+        {tab === "organisateurs" && (
+          <>
+            {mode === "list" && (
+              <div className="space-y-3">
+                {organisateurs.length === 0 && (
+                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
+                    Aucun organisateur.
+                  </p>
+                )}
+                {organisateurs.map((org) => (
+                  <div
+                    key={org.id}
+                    className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-gray-900 dark:text-slate-100 truncate text-sm">
+                          {org.nom}
+                        </p>
+                        <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
+                          {org.type_org}
+                          {org.ville ? ` · ${org.ville}` : ""}
+                        </p>
+                        <span
+                          className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full mt-1.5 ${
+                            org.statut === "Compte validé"
+                              ? "bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400"
+                              : org.statut === "Compte vérifié"
+                                ? "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400"
+                                : org.statut === "Compte bloqué"
+                                  ? "bg-red-50 dark:bg-red-950 text-red-500"
+                                  : "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400"
+                          }`}
+                        >
+                          {org.statut}
+                        </span>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <button
+                          onClick={() => {
+                            setSelected(org);
+                            setMode("edit");
+                          }}
+                          className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() =>
+                            setDeleteConfirm({ type: "org", item: org })
+                          }
+                          className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {mode === "create" && (
+              <OrganisateurForm
+                initial={null}
+                onSubmit={handleCreateOrg}
+                onCancel={() => setMode("list")}
+              />
+            )}
+
+            {mode === "edit" && selected && (
+              <>
+                <button
+                  onClick={() => setMode("list")}
+                  className="flex items-center gap-1 text-teal-600 dark:text-teal-400 text-sm mb-4"
+                >
+                  ← Retour à la liste
+                </button>
+                <OrganisateurForm
+                  initial={selected}
+                  onSubmit={handleUpdateOrg}
+                  onCancel={() => setMode("list")}
+                />
+              </>
+            )}
+          </>
+        )}
+
+        {/* Modal suppression */}
         {deleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-4">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
-              <h2 className="text-lg font-bold text-gray-900 mb-2">
-                Supprimer l'event ?
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-gray-200 dark:border-slate-700 shadow-xl">
+              <h2 className="text-lg font-bold tracking-tight text-gray-950 dark:text-slate-100 mb-2">
+                Supprimer ?
               </h2>
-              <p className="text-gray-500 text-sm mb-6">
-                <span className="font-medium text-gray-700">
-                  "{deleteConfirm.title}"
+              <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
+                <span className="font-medium text-gray-700 dark:text-slate-300">
+                  "{deleteConfirm.item.nom || deleteConfirm.item.title}"
                 </span>{" "}
                 sera définitivement supprimé.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteConfirm(null)}
-                  className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-3 text-sm font-semibold"
+                  className="flex-1 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 rounded-xl py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   Annuler
                 </button>
                 <button
-                  onClick={() => handleDelete(deleteConfirm.id)}
+                  onClick={handleDelete}
                   className="flex-1 bg-red-500 text-white rounded-xl py-3 text-sm font-semibold hover:bg-red-600 transition-colors"
                 >
                   Supprimer

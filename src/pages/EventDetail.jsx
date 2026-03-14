@@ -15,7 +15,7 @@ function EventDetail() {
   async function fetchEvent() {
     const { data, error } = await supabase
       .from("events")
-      .select("*")
+      .select("*, organisateurs(*)")
       .eq("id", id)
       .single();
     if (error) console.error(error);
@@ -27,6 +27,16 @@ function EventDetail() {
     Street: "bg-teal-700 dark:bg-teal-400 text-white dark:text-slate-900",
     Bowl: "bg-amber-700 dark:bg-amber-400 text-white dark:text-slate-900",
     Ramp: "bg-violet-700 dark:bg-violet-400 text-white dark:text-slate-900",
+  };
+
+  const statutBadge = {
+    "Compte validé":
+      "bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400",
+    "Compte vérifié":
+      "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
+    "Compte bloqué": "bg-red-50 dark:bg-red-950 text-red-500",
+    "Compte en attente":
+      "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400",
   };
 
   if (loading)
@@ -47,25 +57,64 @@ function EventDetail() {
       </div>
     );
 
-  const formattedDate = new Date(event.date).toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  const formattedTime = new Date(event.date).toLocaleTimeString("fr-FR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  // ── Formatage des dates ──────────────────────────────────
+  const debut = new Date(event.date);
+  const fin = event.date_fin ? new Date(event.date_fin) : null;
+  const memeJour = fin && debut.toDateString() === fin.toDateString();
 
-  const fields = [
-    { label: "Date", value: formattedDate, span: true },
-    { label: "Heure", value: formattedTime },
-    { label: "Type", value: event.type },
-    { label: "Ville", value: event.ville || "—" },
-    { label: "Lieu", value: event.location },
-    { label: "Région", value: event.region, span: true },
-  ];
+  function formatJour(date) {
+    return date.toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }
+
+  function formatHeure(date) {
+    return date
+      .toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+      .replace(":", "h");
+  }
+
+  function formatAgenda() {
+    if (!fin) {
+      return "Le " + formatJour(debut) + " à " + formatHeure(debut);
+    }
+    if (memeJour) {
+      return (
+        "Le " +
+        formatJour(debut) +
+        "\nde " +
+        formatHeure(debut) +
+        " à " +
+        formatHeure(fin)
+      );
+    }
+    return (
+      "Du " +
+      formatJour(debut) +
+      " à " +
+      formatHeure(debut) +
+      "\nau " +
+      formatJour(fin) +
+      " à " +
+      formatHeure(fin)
+    );
+  }
+
+  // ── Infos pratiques ──────────────────────────────────────
+  const infosPratiques = [
+    { key: "infos_bar", label: "Bar", icon: "🍺" },
+    { key: "infos_restauration", label: "Restauration", icon: "🍔" },
+    { key: "infos_parking", label: "Parking", icon: "🅿️" },
+    { key: "infos_sanitaire", label: "Sanitaires", icon: "🚻" },
+  ].filter(({ key }) => !!event[key]);
+
+  const org = event.organisateurs;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
@@ -112,7 +161,7 @@ function EventDetail() {
           </div>
         )}
 
-        {/* Titre + badge */}
+        {/* Badge + Titre */}
         <div>
           <span
             className={`inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 ${badgeClass[event.type] || "bg-gray-100 text-gray-700"}`}
@@ -124,19 +173,36 @@ function EventDetail() {
           </h1>
         </div>
 
-        {/* Infos */}
+        {/* Bloc date agenda */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
+          <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2">
+            📅 Date
+          </dt>
+          <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100 leading-relaxed whitespace-pre-line capitalize">
+            {formatAgenda()}
+          </dd>
+        </div>
+
+        {/* Bloc lieu */}
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
           <div className="grid grid-cols-2 gap-4">
-            {fields.map(({ label, value, span }) => (
-              <div key={label} className={span ? "col-span-2" : "col-span-1"}>
-                <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-0.5">
-                  {label}
-                </dt>
-                <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100">
-                  {value}
-                </dd>
-              </div>
-            ))}
+            <div className="col-span-2">
+              <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-0.5">
+                📍 Lieu
+              </dt>
+              <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100">
+                {event.location}
+                {event.ville ? ", " + event.ville : ""}
+              </dd>
+            </div>
+            <div className="col-span-2">
+              <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-0.5">
+                🗺️ Région
+              </dt>
+              <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100">
+                {event.region}
+              </dd>
+            </div>
           </div>
         </div>
 
@@ -149,6 +215,105 @@ function EventDetail() {
             <p className="text-[14px] text-gray-600 dark:text-slate-400 leading-relaxed">
               {event.description}
             </p>
+          </div>
+        )}
+
+        {/* Infos pratiques */}
+        {infosPratiques.length > 0 && (
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
+            <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-3">
+              Infos pratiques
+            </dt>
+            <div className="flex flex-wrap gap-2">
+              {infosPratiques.map(({ key, label, icon }) => (
+                <span
+                  key={key}
+                  className="inline-flex items-center gap-1.5 text-sm bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 px-3 py-1.5 rounded-full font-medium"
+                >
+                  <span>{icon}</span>
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Infos complémentaires */}
+        {event.infos_complementaires && (
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
+            <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2">
+              Informations complémentaires
+            </dt>
+            <p className="text-[14px] text-gray-600 dark:text-slate-400 leading-relaxed">
+              {event.infos_complementaires}
+            </p>
+          </div>
+        )}
+
+        {/* Organisateur */}
+        {org && (
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+            {/* En-tête */}
+            <div className="px-4 pt-4 pb-3 border-b border-gray-100 dark:border-slate-700">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
+                    {org.nom}
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">
+                    {org.type_org}
+                    {org.ville ? " · " + org.ville : ""}
+                    {org.region ? " · " + org.region : ""}
+                  </p>
+                </div>
+                <span
+                  className={
+                    "text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 " +
+                    (statutBadge[org.statut] || "")
+                  }
+                >
+                  {org.statut}
+                </span>
+              </div>
+
+              {org.description && (
+                <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed mt-2">
+                  {org.description}
+                </p>
+              )}
+            </div>
+
+            {/* Contacts */}
+            <div className="px-4 py-3 flex flex-col gap-2">
+              {org.mail && (
+                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                  <span>✉️</span>
+                  <span className="truncate">{org.mail}</span>
+                </div>
+              )}
+              {org.tel && (
+                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                  <span>📞</span>
+                  <span>{org.tel}</span>
+                </div>
+              )}
+              {org.lien && (
+                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                  <span>🔗</span>
+                  <span className="truncate">{org.lien}</span>
+                </div>
+              )}
+              {(org.adresse || org.code_postal || org.ville) && (
+                <div className="flex items-start gap-2.5 text-xs text-gray-400 dark:text-slate-500">
+                  <span>📍</span>
+                  <span>
+                    {[org.adresse, org.code_postal, org.ville]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
