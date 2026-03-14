@@ -1,44 +1,82 @@
-function EventCard({ event, onClick }) {
+function EventCard({ event, onClick, index }) {
   const formattedDate = new Date(event.date).toLocaleDateString("fr-FR", {
-    weekday: "long",
     day: "numeric",
-    month: "long",
+    month: "short",
     year: "numeric",
   });
+  const formattedTime = new Date(event.date).toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
-  const typeColors = {
-    street: "bg-blue-100 text-blue-700",
-    bowl: "bg-orange-100 text-orange-700",
-    ramp: "bg-green-100 text-green-700",
+  const badgeClass = {
+    Street: "bg-teal-700 dark:bg-teal-400 text-white dark:text-slate-900",
+    Bowl: "bg-amber-700 dark:bg-amber-400 text-white dark:text-slate-900",
+    Ramp: "bg-violet-700 dark:bg-violet-400 text-white dark:text-slate-900",
   };
-  const typeStyle = typeColors[event.type] || "bg-gray-100 text-gray-700";
 
   return (
     <div
       onClick={() => onClick(event.id)}
-      className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-3 cursor-pointer hover:shadow-md transition-shadow"
+      className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden flex cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50 transition-shadow duration-150"
+      style={{ animationDelay: `${index * 0.08}s` }}
     >
-      {event.image_url && (
+      {/* Contenu gauche */}
+      <div className="flex-1 min-w-0 p-4 flex flex-col justify-between">
+        <div>
+          {/* Badge type */}
+          <span
+            className={`inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 ${badgeClass[event.type] || "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300"}`}
+          >
+            {event.type}
+          </span>
+
+          {/* Titre */}
+          <h2 className="text-[15px] font-bold tracking-tight text-gray-950 dark:text-slate-100 leading-snug text-balance mb-2">
+            {event.title}
+          </h2>
+
+          {/* Métadonnées */}
+          <div className="text-[12px] text-gray-500 dark:text-slate-400 leading-relaxed">
+            <span className="font-medium text-gray-700 dark:text-slate-300">
+              {formattedDate}
+            </span>
+            {" · "}
+            {formattedTime}
+            <br />
+            {event.location}
+            {event.ville ? ` · ${event.ville}` : ""}
+          </div>
+        </div>
+      </div>
+
+      {/* Image droite 4:5 */}
+      {event.image_url ? (
         <img
           src={event.image_url}
           alt={event.title}
-          className="w-full h-40 object-cover rounded-xl mb-3"
+          className="w-24 min-w-24 object-cover border-l border-gray-200 dark:border-slate-700"
+          style={{ aspectRatio: "4/5" }}
         />
-      )}
-      <span
-        className={`text-xs font-semibold px-2 py-1 rounded-full ${typeStyle}`}
-      >
-        {event.type}
-      </span>
-      <h2 className="text-lg font-bold text-gray-900 mt-2">{event.title}</h2>
-      <p className="text-sm text-gray-500 mt-1">📅 {formattedDate}</p>
-      <p className="text-sm text-gray-500">
-        📍 {event.location} — {event.region}
-      </p>
-      {event.description && (
-        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-          {event.description}
-        </p>
+      ) : (
+        <div
+          className="w-24 min-w-24 border-l border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-900 flex items-center justify-center"
+          style={{ aspectRatio: "4/5" }}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            className="text-gray-300 dark:text-slate-700"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <path d="M21 15l-5-5L5 21" />
+          </svg>
+        </div>
       )}
     </div>
   );

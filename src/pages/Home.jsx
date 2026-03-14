@@ -17,68 +17,70 @@ function Home() {
 
   async function fetchEvents() {
     setLoading(true);
-
     let query = supabase
       .from("events")
       .select("*")
       .gte("date", new Date().toISOString())
       .order("date", { ascending: true })
       .limit(10);
-
     if (selectedRegion) query = query.eq("region", selectedRegion);
     if (selectedType) query = query.eq("type", selectedType);
-
     const { data, error } = await query;
-
-    if (error) console.error("Erreur :", error);
+    if (error) console.error(error);
     else setEvents(data);
-
     setLoading(false);
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto px-4 pt-8 pb-24">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">🛹 Skate Events</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Les prochains événements près de chez toi
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
+      {/* Header */}
+      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4 bg-hatch">
+        <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100">
+          SKATE<span className="text-teal-600 dark:text-teal-400">EVT</span>
+        </h1>
+        <p className="text-xs text-gray-500 dark:text-slate-500 mt-0.5">
+          Les prochains événements en France
+        </p>
+      </header>
 
-        {/* Filtres */}
-        <Filters
-          selectedRegion={selectedRegion}
-          selectedType={selectedType}
-          onRegionChange={setSelectedRegion}
-          onTypeChange={setSelectedType}
-        />
+      {/* Filtres */}
+      <Filters
+        selectedRegion={selectedRegion}
+        selectedType={selectedType}
+        onRegionChange={setSelectedRegion}
+        onTypeChange={setSelectedType}
+      />
 
-        {/* Chargement */}
+      {/* Liste */}
+      <main className="px-3 pt-3 pb-28 bg-hatch min-h-screen">
         {loading && (
-          <p className="text-center text-gray-400 mt-10">Chargement...</p>
+          <p className="text-center text-sm text-gray-400 dark:text-slate-600 mt-16">
+            Chargement...
+          </p>
         )}
 
-        {/* Aucun résultat */}
         {!loading && events.length === 0 && (
-          <div className="text-center mt-10">
-            <p className="text-gray-400">Aucun événement trouvé</p>
-            <p className="text-sm text-gray-300 mt-1">
+          <div className="text-center mt-20">
+            <p className="text-lg font-bold tracking-tight text-gray-200 dark:text-slate-700">
+              Aucun événement
+            </p>
+            <p className="text-xs text-gray-400 dark:text-slate-600 mt-1">
               Essaie d'autres filtres
             </p>
           </div>
         )}
 
-        {/* Liste des events */}
-        {events.map((event) => (
-          <EventCard
-            key={event.id}
-            event={event}
-            onClick={(id) => navigate(`/events/${id}`)}
-          />
-        ))}
-      </div>
+        <div className="flex flex-col gap-2.5">
+          {events.map((event, index) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              index={index}
+              onClick={(id) => navigate(`/events/${id}`)}
+            />
+          ))}
+        </div>
+      </main>
     </div>
   );
 }

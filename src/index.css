@@ -1,3 +1,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-gray-50 dark:bg-slate-900 text-gray-950 dark:text-slate-100 transition-colors duration-200;
+  }
+  ::-webkit-scrollbar {
+    @apply w-1 h-1;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-200 dark:bg-slate-700 rounded;
+  }
+}
+
+@layer utilities {
+  .bg-hatch {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.022) 0px,
+      rgba(0, 0, 0, 0.022) 1px,
+      transparent 1px,
+      transparent 9px
+    );
+  }
+  .dark .bg-hatch {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.025) 0px,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px,
+      transparent 9px
+    );
+  }
+}
