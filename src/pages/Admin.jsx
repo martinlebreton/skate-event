@@ -90,7 +90,7 @@ function EventForm({
           onChange={handleChange}
           placeholder="Décris l'événement..."
           rows={3}
-          className={`${inputClass} resize-none`}
+          className={inputClass + " resize-none"}
         />
       </div>
 
@@ -242,7 +242,7 @@ function EventForm({
           onChange={handleChange}
           placeholder="Autres informations utiles..."
           rows={2}
-          className={`${inputClass} resize-none`}
+          className={inputClass + " resize-none"}
         />
       </div>
 
@@ -355,10 +355,12 @@ function Admin() {
   }
 
   async function handleCreateEvent(form) {
+    // Retire l'objet joint avant insertion
+    const { organisateurs: _, ...formClean } = form;
     const { error } = await supabase.from("events").insert([
       {
-        ...form,
-        organisateur_id: form.organisateur_id || null,
+        ...formClean,
+        organisateur_id: formClean.organisateur_id || null,
       },
     ]);
     if (!error) fetchEvents();
@@ -366,11 +368,14 @@ function Admin() {
   }
 
   async function handleUpdateEvent(form) {
+    // Retire l'objet joint avant update
+    const { organisateurs: _, ...formClean } = form;
+    console.log("organisateur_id envoyé :", formClean.organisateur_id);
     const { error } = await supabase
       .from("events")
       .update({
-        ...form,
-        organisateur_id: form.organisateur_id || null,
+        ...formClean,
+        organisateur_id: formClean.organisateur_id || null,
       })
       .eq("id", selected.id);
     if (!error) fetchEvents();
@@ -494,11 +499,12 @@ function Admin() {
                 setTab(t.key);
                 setMode("list");
               }}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                tab === t.key
+              className={
+                "px-4 py-2 rounded-xl text-sm font-medium transition-colors " +
+                (tab === t.key
                   ? "bg-teal-600 dark:bg-teal-500 text-white"
-                  : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400"
-              }`}
+                  : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400")
+              }
             >
               {t.label}
             </button>
@@ -515,11 +521,12 @@ function Admin() {
               <button
                 key={t.key}
                 onClick={() => setMode(t.key)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  mode === t.key
+                className={
+                  "px-4 py-2 rounded-xl text-sm font-medium transition-colors " +
+                  (mode === t.key
                     ? "bg-gray-900 dark:bg-slate-100 text-white dark:text-slate-900"
-                    : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400"
-                }`}
+                    : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400")
+                }
               >
                 {t.label}
               </button>
@@ -641,18 +648,19 @@ function Admin() {
                         </p>
                         <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
                           {org.type_org}
-                          {org.ville ? ` · ${org.ville}` : ""}
+                          {org.ville ? " · " + org.ville : ""}
                         </p>
                         <span
-                          className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full mt-1.5 ${
-                            org.statut === "Compte validé"
+                          className={
+                            "inline-block text-[10px] font-medium px-2 py-0.5 rounded-full mt-1.5 " +
+                            (org.statut === "Compte validé"
                               ? "bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400"
                               : org.statut === "Compte vérifié"
                                 ? "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400"
                                 : org.statut === "Compte bloqué"
                                   ? "bg-red-50 dark:bg-red-950 text-red-500"
-                                  : "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400"
-                          }`}
+                                  : "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400")
+                          }
                         >
                           {org.statut}
                         </span>
