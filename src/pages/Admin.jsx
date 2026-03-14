@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { useEnums } from "../hooks/useEnums";
@@ -66,7 +66,6 @@ function EventForm({
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 space-y-4">
-      {/* Titre */}
       <div>
         <label className={labelClass}>
           Titre <span className="text-red-500">*</span>
@@ -81,7 +80,6 @@ function EventForm({
         />
       </div>
 
-      {/* Description */}
       <div>
         <label className={labelClass}>Description</label>
         <textarea
@@ -94,7 +92,6 @@ function EventForm({
         />
       </div>
 
-      {/* Date début + Date fin */}
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelClass}>
@@ -120,7 +117,6 @@ function EventForm({
         </div>
       </div>
 
-      {/* Lieu */}
       <div>
         <label className={labelClass}>
           Lieu <span className="text-red-500">*</span>
@@ -135,7 +131,6 @@ function EventForm({
         />
       </div>
 
-      {/* Ville */}
       <div>
         <label className={labelClass}>Ville</label>
         <input
@@ -148,7 +143,6 @@ function EventForm({
         />
       </div>
 
-      {/* Région + Type */}
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelClass}>
@@ -188,7 +182,6 @@ function EventForm({
         </div>
       </div>
 
-      {/* Organisateur */}
       <div>
         <label className={labelClass}>Organisateur</label>
         <select
@@ -206,7 +199,6 @@ function EventForm({
         </select>
       </div>
 
-      {/* Infos pratiques */}
       <div>
         <label className={labelClass}>Infos pratiques</label>
         <div className="grid grid-cols-2 gap-2 mt-2">
@@ -233,7 +225,6 @@ function EventForm({
         </div>
       </div>
 
-      {/* Infos complémentaires */}
       <div>
         <label className={labelClass}>Infos complémentaires</label>
         <textarea
@@ -246,7 +237,6 @@ function EventForm({
         />
       </div>
 
-      {/* Image actuelle */}
       {form.image_url && (
         <div>
           <label className={labelClass}>Image actuelle</label>
@@ -259,7 +249,6 @@ function EventForm({
         </div>
       )}
 
-      {/* Upload image */}
       <ImageUpload onUpload={(url) => setForm({ ...form, image_url: url })} />
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -305,14 +294,20 @@ const EMPTY_EVENT = {
 // ── Page Admin ────────────────────────────────────────────
 function Admin() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, signIn, signOut } = useAuth();
   const { regions, types } = useEnums();
 
+  // ── Initialisation directe depuis le state de navigation ──
+  // Si on arrive avec un editEvent, on démarre directement en mode edit
+  const initialSelected = location.state?.editEvent || null;
+  const initialMode = location.state?.editEvent ? "edit" : "list";
+
   const [tab, setTab] = useState("events");
-  const [mode, setMode] = useState("list");
+  const [mode, setMode] = useState(initialMode);
   const [events, setEvents] = useState([]);
   const [organisateurs, setOrganisateurs] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(initialSelected);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [loadingData, setLoadingData] = useState(true);
 
@@ -320,6 +315,13 @@ function Admin() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+
+  // Nettoie le state de navigation dès le montage
+  useEffect(() => {
+    if (location.state?.editEvent) {
+      window.history.replaceState({}, "");
+    }
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -355,7 +357,6 @@ function Admin() {
   }
 
   async function handleCreateEvent(form) {
-    // Retire l'objet joint avant insertion
     const { organisateurs: _, ...formClean } = form;
     const { error } = await supabase.from("events").insert([
       {
@@ -368,9 +369,7 @@ function Admin() {
   }
 
   async function handleUpdateEvent(form) {
-    // Retire l'objet joint avant update
     const { organisateurs: _, ...formClean } = form;
-    console.log("organisateur_id envoyé :", formClean.organisateur_id);
     const { error } = await supabase
       .from("events")
       .update({
@@ -608,7 +607,10 @@ function Admin() {
             {mode === "edit" && selected && (
               <>
                 <button
-                  onClick={() => setMode("list")}
+                  onClick={() => {
+                    setMode("list");
+                    setSelected(null);
+                  }}
                   className="flex items-center gap-1 text-teal-600 dark:text-teal-400 text-sm mb-4"
                 >
                   ← Retour à la liste
@@ -616,7 +618,10 @@ function Admin() {
                 <EventForm
                   initial={selected}
                   onSubmit={handleUpdateEvent}
-                  onCancel={() => setMode("list")}
+                  onCancel={() => {
+                    setMode("list");
+                    setSelected(null);
+                  }}
                   regions={regions}
                   types={types}
                   organisateurs={organisateurs}
@@ -701,7 +706,10 @@ function Admin() {
             {mode === "edit" && selected && (
               <>
                 <button
-                  onClick={() => setMode("list")}
+                  onClick={() => {
+                    setMode("list");
+                    setSelected(null);
+                  }}
                   className="flex items-center gap-1 text-teal-600 dark:text-teal-400 text-sm mb-4"
                 >
                   ← Retour à la liste
@@ -709,7 +717,10 @@ function Admin() {
                 <OrganisateurForm
                   initial={selected}
                   onSubmit={handleUpdateOrg}
-                  onCancel={() => setMode("list")}
+                  onCancel={() => {
+                    setMode("list");
+                    setSelected(null);
+                  }}
                 />
               </>
             )}

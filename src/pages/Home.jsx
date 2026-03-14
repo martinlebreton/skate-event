@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { useAuth } from "../context/AuthContext";
 import EventCard from "../components/EventCard";
 import Filters from "../components/Filters";
 
@@ -10,6 +11,7 @@ function Home() {
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchEvents();
@@ -31,16 +33,33 @@ function Home() {
     setLoading(false);
   }
 
+  function handleEdit(e, event) {
+    e.stopPropagation();
+    navigate("/admin", { state: { editEvent: event } });
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4 bg-hatch">
-        <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100">
-          SKATE<span className="text-teal-600 dark:text-teal-400">EVT</span>
-        </h1>
-        <p className="text-xs text-gray-500 dark:text-slate-500 mt-0.5">
-          Les prochains événements en France
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100">
+              SKATE<span className="text-teal-600 dark:text-teal-400">EVT</span>
+            </h1>
+            <p className="text-xs text-gray-500 dark:text-slate-500 mt-0.5">
+              Les prochains événements en France
+            </p>
+          </div>
+          {user && (
+            <button
+              onClick={() => navigate("/admin")}
+              className="text-xs font-medium text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950 border border-teal-200 dark:border-teal-800 px-3 py-1.5 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
+            >
+              ⚙️ Admin
+            </button>
+          )}
+        </div>
       </header>
 
       {/* Filtres */}
@@ -72,12 +91,21 @@ function Home() {
 
         <div className="flex flex-col gap-2.5">
           {events.map((event, index) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              index={index}
-              onClick={(id) => navigate(`/events/${id}`)}
-            />
+            <div key={event.id} className="relative">
+              <EventCard
+                event={event}
+                index={index}
+                onClick={(id) => navigate("/events/" + id)}
+              />
+              {user && (
+                <button
+                  onClick={(e) => handleEdit(e, event)}
+                  className="absolute top-2 right-2 text-[10px] font-medium bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 px-2 py-1 rounded-lg hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors shadow-sm"
+                >
+                  ✏️ Modifier
+                </button>
+              )}
+            </div>
           ))}
         </div>
       </main>
