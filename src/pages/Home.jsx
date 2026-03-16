@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
-import EventCard from "../components/EventCard";
+import EventCard from "../components/cards/EventCard";
 import Filters from "../components/Filters";
 
 function Home() {

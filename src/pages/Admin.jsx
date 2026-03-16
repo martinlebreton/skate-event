@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useEnums } from "../hooks/useEnums";
 import ImageUpload from "../components/ImageUpload";
 import OrganisateurForm from "../components/OrganisateurForm";
+import EventCard from "../components/cards/EventCard";
 
 // ── Formulaire event ──────────────────────────────────────
 function EventForm({
@@ -534,102 +535,35 @@ function Admin() {
         )}
 
         {/* ── EVENTS ── */}
-        {tab === "events" && (
-          <>
-            {mode === "list" && (
-              <div className="space-y-3">
-                {loadingData && (
-                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
-                    Chargement...
-                  </p>
-                )}
-                {!loadingData && events.length === 0 && (
-                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
-                    Aucun événement.
-                  </p>
-                )}
-                {events.map((event) => (
-                  <div
-                    key={event.id}
-                    className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 dark:text-slate-100 truncate text-sm">
-                          {event.title}
-                        </p>
-                        <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
-                          📅 {formatDate(event.date)} · {event.type} ·{" "}
-                          {event.region}
-                        </p>
-                        {event.organisateurs && (
-                          <p className="text-xs text-teal-600 dark:text-teal-400 mt-0.5">
-                            🏢 {event.organisateurs.nom}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex gap-2 shrink-0">
-                        <button
-                          onClick={() => {
-                            setSelected(event);
-                            setMode("edit");
-                          }}
-                          className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
-                        >
-                          Modifier
-                        </button>
-                        <button
-                          onClick={() =>
-                            setDeleteConfirm({ type: "event", item: event })
-                          }
-                          className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {mode === "create" && (
-              <EventForm
-                initial={EMPTY_EVENT}
-                onSubmit={handleCreateEvent}
-                onCancel={() => setMode("list")}
-                regions={regions}
-                types={types}
-                organisateurs={organisateurs}
-              />
-            )}
-
-            {mode === "edit" && selected && (
-              <>
+        {events.map((event) => (
+          <EventCard
+            key={event.id}
+            event={event}
+            actions={
+              <div className="flex gap-2">
                 <button
-                  onClick={() => {
-                    setMode("list");
-                    setSelected(null);
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelected(event);
+                    setMode("edit");
                   }}
-                  className="flex items-center gap-1 text-teal-600 dark:text-teal-400 text-sm mb-4"
+                  className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
                 >
-                  ← Retour à la liste
+                  Modifier
                 </button>
-                <EventForm
-                  initial={selected}
-                  onSubmit={handleUpdateEvent}
-                  onCancel={() => {
-                    setMode("list");
-                    setSelected(null);
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDeleteConfirm({ type: "event", item: event });
                   }}
-                  regions={regions}
-                  types={types}
-                  organisateurs={organisateurs}
-                />
-              </>
-            )}
-          </>
-        )}
+                  className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                >
+                  Supprimer
+                </button>
+              </div>
+            }
+          />
+        ))}
 
         {/* ── ORGANISATEURS ── */}
         {tab === "organisateurs" && (

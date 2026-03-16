@@ -1,4 +1,6 @@
-function EventCard({ event, onClick, index }) {
+import Badge from "../ui/Badge";
+
+function EventCard({ event, onClick, index = 0, actions }) {
   const formattedDate = new Date(event.date).toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "short",
@@ -9,34 +11,26 @@ function EventCard({ event, onClick, index }) {
     minute: "2-digit",
   });
 
-  const badgeClass = {
-    Street: "bg-teal-700 dark:bg-teal-400 text-white dark:text-slate-900",
-    Bowl: "bg-amber-700 dark:bg-amber-400 text-white dark:text-slate-900",
-    Ramp: "bg-violet-700 dark:bg-violet-400 text-white dark:text-slate-900",
-  };
-
   return (
     <div
-      onClick={() => onClick(event.id)}
-      className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden flex cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50 transition-shadow duration-150"
-      style={{ animationDelay: `${index * 0.08}s` }}
+      onClick={() => onClick?.(event.id)}
+      className={
+        "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden flex transition-shadow duration-150 mb-2" +
+        (onClick
+          ? "cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50"
+          : "")
+      }
+      style={{ animationDelay: index * 0.08 + "s" }}
     >
       {/* Contenu gauche */}
-      <div className="flex-1 min-w-0 p-4 flex flex-col justify-between">
+      <div className="flex-1 min-w-0 p-4 flex flex-col justify-between gap-2">
         <div>
-          {/* Badge type */}
-          <span
-            className={`inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 ${badgeClass[event.type] || "bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300"}`}
-          >
-            {event.type}
-          </span>
+          <Badge type="eventType" value={event.type} size="md" />
 
-          {/* Titre */}
-          <h2 className="text-[15px] font-bold tracking-tight text-gray-950 dark:text-slate-100 leading-snug text-balance mb-2">
+          <h2 className="text-[15px] font-bold tracking-tight text-gray-950 dark:text-slate-100 leading-snug text-balance mt-2 mb-2">
             {event.title}
           </h2>
 
-          {/* Métadonnées */}
           <div className="text-[12px] text-gray-500 dark:text-slate-400 leading-relaxed">
             <span className="font-medium text-gray-700 dark:text-slate-300">
               {formattedDate}
@@ -45,9 +39,12 @@ function EventCard({ event, onClick, index }) {
             {formattedTime}
             <br />
             {event.location}
-            {event.ville ? ` · ${event.ville}` : ""}
+            {event.ville ? " · " + event.ville : ""}
           </div>
         </div>
+
+        {/* Zone d'actions optionnelle — boutons Modifier/Supprimer en admin */}
+        {actions && <div className="flex gap-2 mt-1">{actions}</div>}
       </div>
 
       {/* Image droite 4:5 */}
