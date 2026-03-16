@@ -1,5 +1,11 @@
 import { useState } from "react";
 import { useEnums } from "../hooks/useEnums";
+import {
+  inputClass,
+  labelClass,
+  btnPrimary,
+  btnSecondary,
+} from "./forms/formStyles";
 
 const EMPTY_ORG = {
   nom: "",
@@ -53,11 +59,6 @@ function OrganisateurForm({ initial, onSubmit, onCancel }) {
         </button>
       </div>
     );
-
-  const inputClass =
-    "w-full border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400";
-  const labelClass =
-    "block text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-1";
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 space-y-4">
@@ -220,23 +221,20 @@ function OrganisateurForm({ initial, onSubmit, onCancel }) {
           onChange={handleChange}
           placeholder="Présentation de l'organisation..."
           rows={3}
-          className={`${inputClass} resize-none`}
+          className={inputClass + " resize-none"}
         />
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
       <div className="flex gap-3 pt-2">
-        <button
-          onClick={onCancel}
-          className="flex-1 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 rounded-xl py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-        >
+        <button onClick={onCancel} className={btnSecondary}>
           Annuler
         </button>
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="flex-1 bg-teal-600 dark:bg-teal-500 text-white rounded-xl py-3 text-sm font-semibold hover:bg-teal-700 dark:hover:bg-teal-600 transition-colors disabled:opacity-50"
+          className={btnPrimary}
         >
           {loading ? "Sauvegarde..." : "Sauvegarder"}
         </button>
