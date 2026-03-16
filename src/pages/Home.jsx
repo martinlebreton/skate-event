@@ -4,6 +4,7 @@ import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import EventCard from "../components/cards/EventCard";
 import Filters from "../components/Filters";
+import EmptyState from "../components/ui/EmptyState";
 
 function Home() {
   const [events, setEvents] = useState([]);
@@ -79,14 +80,11 @@ function Home() {
         )}
 
         {!loading && events.length === 0 && (
-          <div className="text-center mt-20">
-            <p className="text-lg font-bold tracking-tight text-gray-200 dark:text-slate-700">
-              Aucun événement
-            </p>
-            <p className="text-xs text-gray-400 dark:text-slate-600 mt-1">
-              Essaie d'autres filtres
-            </p>
-          </div>
+          <EmptyState
+            icon="🛹"
+            title="Aucun événement"
+            subtitle="Essaie d'autres filtres"
+          />
         )}
 
         <div className="flex flex-col gap-2.5">

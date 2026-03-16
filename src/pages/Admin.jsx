@@ -6,6 +6,9 @@ import { useEnums } from "../hooks/useEnums";
 import ImageUpload from "../components/ImageUpload";
 import OrganisateurForm from "../components/OrganisateurForm";
 import EventCard from "../components/cards/EventCard";
+import OrgCard from "../components/cards/OrgCard";
+import EmptyState from "../components/ui/EmptyState";
+import DeleteModal from "../components/ui/DeleteModal";
 
 // ── Formulaire event ──────────────────────────────────────
 function EventForm({
@@ -299,8 +302,6 @@ function Admin() {
   const { user, signIn, signOut } = useAuth();
   const { regions, types } = useEnums();
 
-  // ── Initialisation directe depuis le state de navigation ──
-  // Si on arrive avec un editEvent, on démarre directement en mode edit
   const initialSelected = location.state?.editEvent || null;
   const initialMode = location.state?.editEvent ? "edit" : "list";
 
@@ -317,7 +318,6 @@ function Admin() {
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
-  // Nettoie le state de navigation dès le montage
   useEffect(() => {
     if (location.state?.editEvent) {
       window.history.replaceState({}, "");
@@ -412,14 +412,6 @@ function Admin() {
     setDeleteConfirm(null);
     if (deleteConfirm.type === "event") fetchEvents();
     else fetchOrganisateurs();
-  }
-
-  function formatDate(date) {
-    return new Date(date).toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
   }
 
   const inputClass =
@@ -535,35 +527,87 @@ function Admin() {
         )}
 
         {/* ── EVENTS ── */}
-        {events.map((event) => (
-          <EventCard
-            key={event.id}
-            event={event}
-            actions={
-              <div className="flex gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelected(event);
-                    setMode("edit");
-                  }}
-                  className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
-                >
-                  Modifier
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setDeleteConfirm({ type: "event", item: event });
-                  }}
-                  className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
-                >
-                  Supprimer
-                </button>
+        {tab === "events" && (
+          <>
+            {mode === "list" && (
+              <div className="space-y-3">
+                {loadingData && (
+                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
+                    Chargement...
+                  </p>
+                )}
+                {!loadingData && events.length === 0 && (
+                  <EmptyState icon="🛹" title="Aucun événement" />
+                )}
+                {events.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    actions={
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelected(event);
+                            setMode("edit");
+                          }}
+                          className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteConfirm({ type: "event", item: event });
+                          }}
+                          className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    }
+                  />
+                ))}
               </div>
-            }
-          />
-        ))}
+            )}
+
+            {mode === "create" && (
+              <EventForm
+                initial={EMPTY_EVENT}
+                onSubmit={handleCreateEvent}
+                onCancel={() => setMode("list")}
+                regions={regions}
+                types={types}
+                organisateurs={organisateurs}
+              />
+            )}
+
+            {mode === "edit" && selected && (
+              <>
+                <button
+                  onClick={() => {
+                    setMode("list");
+                    setSelected(null);
+                  }}
+                  className="flex items-center gap-1 text-teal-600 dark:text-teal-400 text-sm mb-4"
+                >
+                  ← Retour à la liste
+                </button>
+                <EventForm
+                  initial={selected}
+                  onSubmit={handleUpdateEvent}
+                  onCancel={() => {
+                    setMode("list");
+                    setSelected(null);
+                  }}
+                  regions={regions}
+                  types={types}
+                  organisateurs={organisateurs}
+                />
+              </>
+            )}
+          </>
+        )}
 
         {/* ── ORGANISATEURS ── */}
         {tab === "organisateurs" && (
@@ -571,42 +615,17 @@ function Admin() {
             {mode === "list" && (
               <div className="space-y-3">
                 {organisateurs.length === 0 && (
-                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
-                    Aucun organisateur.
-                  </p>
+                  <EmptyState icon="🏢" title="Aucun organisateur" />
                 )}
                 {organisateurs.map((org) => (
-                  <div
+                  <OrgCard
                     key={org.id}
-                    className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 dark:text-slate-100 truncate text-sm">
-                          {org.nom}
-                        </p>
-                        <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
-                          {org.type_org}
-                          {org.ville ? " · " + org.ville : ""}
-                        </p>
-                        <span
-                          className={
-                            "inline-block text-[10px] font-medium px-2 py-0.5 rounded-full mt-1.5 " +
-                            (org.statut === "Compte validé"
-                              ? "bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400"
-                              : org.statut === "Compte vérifié"
-                                ? "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400"
-                                : org.statut === "Compte bloqué"
-                                  ? "bg-red-50 dark:bg-red-950 text-red-500"
-                                  : "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400")
-                          }
-                        >
-                          {org.statut}
-                        </span>
-                      </div>
-                      <div className="flex gap-2 shrink-0">
+                    org={org}
+                    actions={
+                      <div className="flex gap-2">
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setSelected(org);
                             setMode("edit");
                           }}
@@ -615,16 +634,17 @@ function Admin() {
                           Modifier
                         </button>
                         <button
-                          onClick={() =>
-                            setDeleteConfirm({ type: "org", item: org })
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteConfirm({ type: "org", item: org });
+                          }}
                           className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
                         >
                           Supprimer
                         </button>
                       </div>
-                    </div>
-                  </div>
+                    }
+                  />
                 ))}
               </div>
             )}
@@ -662,35 +682,11 @@ function Admin() {
         )}
 
         {/* Modal suppression */}
-        {deleteConfirm && (
-          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-gray-200 dark:border-slate-700 shadow-xl">
-              <h2 className="text-lg font-bold tracking-tight text-gray-950 dark:text-slate-100 mb-2">
-                Supprimer ?
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
-                <span className="font-medium text-gray-700 dark:text-slate-300">
-                  "{deleteConfirm.item.nom || deleteConfirm.item.title}"
-                </span>{" "}
-                sera définitivement supprimé.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setDeleteConfirm(null)}
-                  className="flex-1 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400 rounded-xl py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="flex-1 bg-red-500 text-white rounded-xl py-3 text-sm font-semibold hover:bg-red-600 transition-colors"
-                >
-                  Supprimer
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <DeleteModal
+          item={deleteConfirm?.item || null}
+          onConfirm={handleDelete}
+          onCancel={() => setDeleteConfirm(null)}
+        />
       </div>
     </div>
   );

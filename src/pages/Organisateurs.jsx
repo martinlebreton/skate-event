@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import OrgCard from "../components/cards/OrgCard";
 import Badge from "../components/ui/Badge";
+import EmptyState from "../components/ui/EmptyState";
 
 function Organisateurs() {
   const [organisateurs, setOrganisateurs] = useState([]);
@@ -123,11 +124,7 @@ function Organisateurs() {
         )}
 
         {!loading && organisateurs.length === 0 && (
-          <div className="text-center mt-20">
-            <p className="text-lg font-bold tracking-tight text-gray-200 dark:text-slate-700">
-              Aucun organisateur
-            </p>
-          </div>
+          <EmptyState icon="🏢" title="Aucun organisateur" />
         )}
 
         <div className="flex flex-col gap-2.5">
