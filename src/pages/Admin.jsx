@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { useEnums } from "../hooks/useEnums";
+import { useEvents } from "../hooks/useEvents";
 import ImageUpload from "../components/ImageUpload";
 import OrganisateurForm from "../components/OrganisateurForm";
 import EventCard from "../components/cards/EventCard";
 import OrgCard from "../components/cards/OrgCard";
 import EmptyState from "../components/ui/EmptyState";
 import DeleteModal from "../components/ui/DeleteModal";
+import { supabase } from "../supabaseClient";
 
 // ── Formulaire event ──────────────────────────────────────
 function EventForm({
@@ -301,17 +302,23 @@ function Admin() {
   const location = useLocation();
   const { user, signIn, signOut } = useAuth();
   const { regions, types } = useEnums();
+  const {
+    events,
+    loading: loadingEvents,
+    fetchEvents,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+  } = useEvents();
 
   const initialSelected = location.state?.editEvent || null;
   const initialMode = location.state?.editEvent ? "edit" : "list";
 
   const [tab, setTab] = useState("events");
   const [mode, setMode] = useState(initialMode);
-  const [events, setEvents] = useState([]);
   const [organisateurs, setOrganisateurs] = useState([]);
   const [selected, setSelected] = useState(initialSelected);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [loadingData, setLoadingData] = useState(true);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -331,16 +338,6 @@ function Admin() {
     }
   }, [user]);
 
-  async function fetchEvents() {
-    setLoadingData(true);
-    const { data } = await supabase
-      .from("events")
-      .select("*, organisateurs(nom)")
-      .order("date", { ascending: true });
-    if (data) setEvents(data);
-    setLoadingData(false);
-  }
-
   async function fetchOrganisateurs() {
     const { data } = await supabase
       .from("organisateurs")
@@ -355,31 +352,6 @@ function Admin() {
     const error = await signIn(email, password);
     if (error) setLoginError("Email ou mot de passe incorrect");
     setLoginLoading(false);
-  }
-
-  async function handleCreateEvent(form) {
-    const { organisateurs: _, ...formClean } = form;
-    const { error } = await supabase.from("events").insert([
-      {
-        ...formClean,
-        organisateur_id: formClean.organisateur_id || null,
-      },
-    ]);
-    if (!error) fetchEvents();
-    return error;
-  }
-
-  async function handleUpdateEvent(form) {
-    const { organisateurs: _, ...formClean } = form;
-    const { error } = await supabase
-      .from("events")
-      .update({
-        ...formClean,
-        organisateur_id: formClean.organisateur_id || null,
-      })
-      .eq("id", selected.id);
-    if (!error) fetchEvents();
-    return error;
   }
 
   async function handleCreateOrg(form) {
@@ -407,11 +379,16 @@ function Admin() {
 
   async function handleDelete() {
     if (!deleteConfirm) return;
-    const table = deleteConfirm.type === "event" ? "events" : "organisateurs";
-    await supabase.from(table).delete().eq("id", deleteConfirm.item.id);
+    if (deleteConfirm.type === "event") {
+      await deleteEvent(deleteConfirm.item.id);
+    } else {
+      await supabase
+        .from("organisateurs")
+        .delete()
+        .eq("id", deleteConfirm.item.id);
+      fetchOrganisateurs();
+    }
     setDeleteConfirm(null);
-    if (deleteConfirm.type === "event") fetchEvents();
-    else fetchOrganisateurs();
   }
 
   const inputClass =
@@ -531,12 +508,12 @@ function Admin() {
           <>
             {mode === "list" && (
               <div className="space-y-3">
-                {loadingData && (
+                {loadingEvents && (
                   <p className="text-center text-sm text-gray-400 dark:text-slate-600">
                     Chargement...
                   </p>
                 )}
-                {!loadingData && events.length === 0 && (
+                {!loadingEvents && events.length === 0 && (
                   <EmptyState icon="🛹" title="Aucun événement" />
                 )}
                 {events.map((event) => (
@@ -574,7 +551,7 @@ function Admin() {
             {mode === "create" && (
               <EventForm
                 initial={EMPTY_EVENT}
-                onSubmit={handleCreateEvent}
+                onSubmit={createEvent}
                 onCancel={() => setMode("list")}
                 regions={regions}
                 types={types}
@@ -595,7 +572,7 @@ function Admin() {
                 </button>
                 <EventForm
                   initial={selected}
-                  onSubmit={handleUpdateEvent}
+                  onSubmit={(form) => updateEvent(selected.id, form)}
                   onCancel={() => {
                     setMode("list");
                     setSelected(null);
