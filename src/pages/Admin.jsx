@@ -3,13 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useEnums } from "../hooks/useEnums";
 import { useEvents } from "../hooks/useEvents";
+import { useOrganisateurs } from "../hooks/useOrganisateurs";
 import ImageUpload from "../components/ImageUpload";
 import OrganisateurForm from "../components/OrganisateurForm";
 import EventCard from "../components/cards/EventCard";
 import OrgCard from "../components/cards/OrgCard";
 import EmptyState from "../components/ui/EmptyState";
 import DeleteModal from "../components/ui/DeleteModal";
-import { supabase } from "../supabaseClient";
 
 // ── Formulaire event ──────────────────────────────────────
 function EventForm({
@@ -302,6 +302,7 @@ function Admin() {
   const location = useLocation();
   const { user, signIn, signOut } = useAuth();
   const { regions, types } = useEnums();
+
   const {
     events,
     loading: loadingEvents,
@@ -311,12 +312,20 @@ function Admin() {
     deleteEvent,
   } = useEvents();
 
+  const {
+    organisateurs,
+    loading: loadingOrgs,
+    fetchOrganisateurs,
+    createOrganisateur,
+    updateOrganisateur,
+    deleteOrganisateur,
+  } = useOrganisateurs();
+
   const initialSelected = location.state?.editEvent || null;
   const initialMode = location.state?.editEvent ? "edit" : "list";
 
   const [tab, setTab] = useState("events");
   const [mode, setMode] = useState(initialMode);
-  const [organisateurs, setOrganisateurs] = useState([]);
   const [selected, setSelected] = useState(initialSelected);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
@@ -338,14 +347,6 @@ function Admin() {
     }
   }, [user]);
 
-  async function fetchOrganisateurs() {
-    const { data } = await supabase
-      .from("organisateurs")
-      .select("*")
-      .order("nom", { ascending: true });
-    if (data) setOrganisateurs(data);
-  }
-
   async function handleLogin() {
     setLoginError("");
     setLoginLoading(true);
@@ -354,39 +355,12 @@ function Admin() {
     setLoginLoading(false);
   }
 
-  async function handleCreateOrg(form) {
-    const { error } = await supabase.from("organisateurs").insert([
-      {
-        ...form,
-        region: form.region || null,
-      },
-    ]);
-    if (!error) fetchOrganisateurs();
-    return error;
-  }
-
-  async function handleUpdateOrg(form) {
-    const { error } = await supabase
-      .from("organisateurs")
-      .update({
-        ...form,
-        region: form.region || null,
-      })
-      .eq("id", selected.id);
-    if (!error) fetchOrganisateurs();
-    return error;
-  }
-
   async function handleDelete() {
     if (!deleteConfirm) return;
     if (deleteConfirm.type === "event") {
       await deleteEvent(deleteConfirm.item.id);
     } else {
-      await supabase
-        .from("organisateurs")
-        .delete()
-        .eq("id", deleteConfirm.item.id);
-      fetchOrganisateurs();
+      await deleteOrganisateur(deleteConfirm.item.id);
     }
     setDeleteConfirm(null);
   }
@@ -591,7 +565,12 @@ function Admin() {
           <>
             {mode === "list" && (
               <div className="space-y-3">
-                {organisateurs.length === 0 && (
+                {loadingOrgs && (
+                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
+                    Chargement...
+                  </p>
+                )}
+                {!loadingOrgs && organisateurs.length === 0 && (
                   <EmptyState icon="🏢" title="Aucun organisateur" />
                 )}
                 {organisateurs.map((org) => (
@@ -629,7 +608,7 @@ function Admin() {
             {mode === "create" && (
               <OrganisateurForm
                 initial={null}
-                onSubmit={handleCreateOrg}
+                onSubmit={createOrganisateur}
                 onCancel={() => setMode("list")}
               />
             )}
@@ -647,7 +626,7 @@ function Admin() {
                 </button>
                 <OrganisateurForm
                   initial={selected}
-                  onSubmit={handleUpdateOrg}
+                  onSubmit={(form) => updateOrganisateur(selected.id, form)}
                   onCancel={() => {
                     setMode("list");
                     setSelected(null);
