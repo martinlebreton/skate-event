@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import EventCard from "../components/cards/EventCard";
 import Filters from "../components/ui/Filters";
 import EmptyState from "../components/ui/EmptyState";
@@ -14,6 +15,7 @@ function Home() {
   const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { dark, toggleDark } = useTheme();
 
   useEffect(() => {
     fetchEvents();
@@ -46,22 +48,59 @@ function Home() {
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4 bg-hatch">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100">
-              SKATE<span className="text-teal-600 dark:text-teal-400">EVT</span>
-            </h1>
-            <p className="text-xs text-gray-500 dark:text-slate-500 mt-0.5">
-              Les prochains événements en France
-            </p>
+          {/* Logo + Titre */}
+          <div className="flex items-center gap-2">
+            <img
+              src="/logo-skateevent.svg"
+              alt="SkateEvt"
+              className="w-10 h-10 rounded-lg"
+            />
+            <div>
+              <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100 leading-none">
+                SKATE
+                <span className="text-teal-600 dark:text-teal-400">EVENT</span>
+              </h1>
+              <p className="text-sm text-slate-400 mt-0.5">
+                Les événements skate en France
+              </p>
+            </div>
           </div>
-          {user && (
-            <button
-              onClick={() => navigate("/admin")}
-              className="text-xs font-medium text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950 border border-teal-200 dark:border-teal-800 px-3 py-1.5 rounded-lg hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
-            >
-              ⚙️ Admin
-            </button>
-          )}
+
+          {/* Bouton dark mode */}
+          <button
+            onClick={toggleDark}
+            className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+          >
+            {dark ? (
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-slate-400"
+              >
+                <circle cx="12" cy="12" r="5" />
+                <path d="M12 3v1m0 16v1M4.22 4.22l.71.71m12.73 12.73.71.71M3 12h1m16 0h1M4.93 19.07l.71-.71M18.36 5.64l.71-.71" />
+              </svg>
+            ) : (
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-slate-400"
+              >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
+              </svg>
+            )}
+            <span className="text-[10px] font-medium text-slate-400">
+              {dark ? "Light" : "Dark"}
+            </span>
+          </button>
         </div>
       </header>
 
