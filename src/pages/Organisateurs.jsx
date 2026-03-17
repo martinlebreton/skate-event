@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useOrganisateurs } from "../hooks/useOrganisateurs";
 import OrgCard from "../components/cards/OrgCard";
 import Badge from "../components/ui/Badge";
-import { BADGE_STATUT } from "../constants";
+import EmptyState from "../components/ui/EmptyState";
 
 function Organisateurs() {
-  const { organisateurs, loading } = useOrganisateurs();
+  const { organisateurs, loading, fetchError } = useOrganisateurs();
   const [selected, setSelected] = useState(null);
 
   // ── Vue détail ──
@@ -106,23 +106,23 @@ function Organisateurs() {
           </p>
         )}
 
-        {!loading && organisateurs.length === 0 && (
-          <div className="text-center mt-20">
-            <p className="text-lg font-bold tracking-tight text-gray-200 dark:text-slate-700">
-              Aucun organisateur
-            </p>
-          </div>
+        {!loading && fetchError && <EmptyState error={fetchError} />}
+
+        {!loading && !fetchError && organisateurs.length === 0 && (
+          <EmptyState icon="🏢" title="Aucun organisateur" />
         )}
 
-        <div className="flex flex-col gap-2.5">
-          {organisateurs.map((org) => (
-            <OrgCard
-              key={org.id}
-              org={org}
-              onClick={(org) => setSelected(org)}
-            />
-          ))}
-        </div>
+        {!loading && !fetchError && (
+          <div className="flex flex-col gap-2.5">
+            {organisateurs.map((org) => (
+              <OrgCard
+                key={org.id}
+                org={org}
+                onClick={(org) => setSelected(org)}
+              />
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

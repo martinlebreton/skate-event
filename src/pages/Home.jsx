@@ -9,6 +9,7 @@ import EmptyState from "../components/ui/EmptyState";
 function Home() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function Home() {
 
   async function fetchEvents() {
     setLoading(true);
+    setFetchError(null);
     let query = supabase
       .from("events")
       .select("*")
@@ -29,7 +31,7 @@ function Home() {
     if (selectedRegion) query = query.eq("region", selectedRegion);
     if (selectedType) query = query.eq("type", selectedType);
     const { data, error } = await query;
-    if (error) console.error(error);
+    if (error) setFetchError(error.message);
     else setEvents(data);
     setLoading(false);
   }
@@ -79,7 +81,9 @@ function Home() {
           </p>
         )}
 
-        {!loading && events.length === 0 && (
+        {!loading && fetchError && <EmptyState error={fetchError} />}
+
+        {!loading && !fetchError && events.length === 0 && (
           <EmptyState
             icon="🛹"
             title="Aucun événement"
@@ -87,25 +91,27 @@ function Home() {
           />
         )}
 
-        <div className="flex flex-col gap-2.5">
-          {events.map((event, index) => (
-            <div key={event.id} className="relative">
-              <EventCard
-                event={event}
-                index={index}
-                onClick={(id) => navigate("/events/" + id)}
-              />
-              {user && (
-                <button
-                  onClick={(e) => handleEdit(e, event)}
-                  className="absolute top-2 right-2 text-[10px] font-medium bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 px-2 py-1 rounded-lg hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors shadow-sm"
-                >
-                  ✏️ Modifier
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
+        {!loading && !fetchError && (
+          <div className="flex flex-col gap-2.5">
+            {events.map((event, index) => (
+              <div key={event.id} className="relative">
+                <EventCard
+                  event={event}
+                  index={index}
+                  onClick={(id) => navigate("/events/" + id)}
+                />
+                {user && (
+                  <button
+                    onClick={(e) => handleEdit(e, event)}
+                    className="absolute top-2 right-2 text-[10px] font-medium bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 px-2 py-1 rounded-lg hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors shadow-sm"
+                  >
+                    ✏️ Modifier
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

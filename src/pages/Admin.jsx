@@ -11,8 +11,6 @@ import OrgCard from "../components/cards/OrgCard";
 import EmptyState from "../components/ui/EmptyState";
 import DeleteModal from "../components/ui/DeleteModal";
 import { inputClass } from "../components/forms/formStyles";
-import { BADGE_STATUT } from "../constants";
-import { formatDateCourte } from "../utils/dates";
 
 function Admin() {
   const navigate = useNavigate();
@@ -23,7 +21,7 @@ function Admin() {
   const {
     events,
     loading: loadingEvents,
-    fetchEvents,
+    fetchError: eventsError,
     createEvent,
     updateEvent,
     deleteEvent,
@@ -32,7 +30,7 @@ function Admin() {
   const {
     organisateurs,
     loading: loadingOrgs,
-    fetchOrganisateurs,
+    fetchError: orgsError,
     createOrganisateur,
     updateOrganisateur,
     deleteOrganisateur,
@@ -56,13 +54,6 @@ function Admin() {
       window.history.replaceState({}, "");
     }
   }, []);
-
-  useEffect(() => {
-    if (user) {
-      fetchEvents();
-      fetchOrganisateurs();
-    }
-  }, [user]);
 
   async function handleLogin() {
     setLoginError("");
@@ -90,26 +81,6 @@ function Admin() {
           <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-slate-100 mb-1">
             🔒 Admin
           </h1>
-          {/* Header */}
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate("/")}
-                className="text-sm text-teal-600 dark:text-teal-400 font-medium"
-              >
-                ← Accueil
-              </button>
-              <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-slate-100">
-                ⚙️ Admin
-              </h1>
-            </div>
-            <button
-              onClick={signOut}
-              className="text-sm text-red-400 hover:text-red-500"
-            >
-              Déconnexion
-            </button>
-          </div>
           <p className="text-sm text-gray-400 dark:text-slate-500 mb-6">
             Accès réservé
           </p>
@@ -150,9 +121,17 @@ function Admin() {
       <div className="max-w-lg mx-auto px-4 pt-8 pb-28">
         {/* Header */}
         <div className="flex items-center justify-between mb-1">
-          <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-slate-100">
-            ⚙️ Admin
-          </h1>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/")}
+              className="text-sm text-teal-600 dark:text-teal-400 font-medium"
+            >
+              ← Accueil
+            </button>
+            <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-slate-100">
+              ⚙️ Admin
+            </h1>
+          </div>
           <button
             onClick={signOut}
             className="text-sm text-red-400 hover:text-red-500"
@@ -221,38 +200,43 @@ function Admin() {
                     Chargement...
                   </p>
                 )}
-                {!loadingEvents && events.length === 0 && (
+                {!loadingEvents && eventsError && (
+                  <EmptyState error={eventsError} />
+                )}
+                {!loadingEvents && !eventsError && events.length === 0 && (
                   <EmptyState icon="🛹" title="Aucun événement" />
                 )}
-                {events.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    actions={
-                      <div className="flex gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelected(event);
-                            setMode("edit");
-                          }}
-                          className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
-                        >
-                          Modifier
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteConfirm({ type: "event", item: event });
-                          }}
-                          className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                    }
-                  />
-                ))}
+                {!loadingEvents &&
+                  !eventsError &&
+                  events.map((event) => (
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      actions={
+                        <div className="flex gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelected(event);
+                              setMode("edit");
+                            }}
+                            className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
+                          >
+                            Modifier
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteConfirm({ type: "event", item: event });
+                            }}
+                            className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                          >
+                            Supprimer
+                          </button>
+                        </div>
+                      }
+                    />
+                  ))}
               </div>
             )}
 
@@ -304,38 +288,41 @@ function Admin() {
                     Chargement...
                   </p>
                 )}
-                {!loadingOrgs && organisateurs.length === 0 && (
+                {!loadingOrgs && orgsError && <EmptyState error={orgsError} />}
+                {!loadingOrgs && !orgsError && organisateurs.length === 0 && (
                   <EmptyState icon="🏢" title="Aucun organisateur" />
                 )}
-                {organisateurs.map((org) => (
-                  <OrgCard
-                    key={org.id}
-                    org={org}
-                    actions={
-                      <div className="flex gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelected(org);
-                            setMode("edit");
-                          }}
-                          className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
-                        >
-                          Modifier
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteConfirm({ type: "org", item: org });
-                          }}
-                          className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                    }
-                  />
-                ))}
+                {!loadingOrgs &&
+                  !orgsError &&
+                  organisateurs.map((org) => (
+                    <OrgCard
+                      key={org.id}
+                      org={org}
+                      actions={
+                        <div className="flex gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelected(org);
+                              setMode("edit");
+                            }}
+                            className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
+                          >
+                            Modifier
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteConfirm({ type: "org", item: org });
+                            }}
+                            className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                          >
+                            Supprimer
+                          </button>
+                        </div>
+                      }
+                    />
+                  ))}
               </div>
             )}
 
