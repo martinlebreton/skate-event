@@ -88,6 +88,26 @@ function Admin() {
           <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-slate-100 mb-1">
             🔒 Admin
           </h1>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate("/")}
+                className="text-sm text-teal-600 dark:text-teal-400 font-medium"
+              >
+                ← Accueil
+              </button>
+              <h1 className="text-xl font-bold tracking-tight text-gray-950 dark:text-slate-100">
+                ⚙️ Admin
+              </h1>
+            </div>
+            <button
+              onClick={signOut}
+              className="text-sm text-red-400 hover:text-red-500"
+            >
+              Déconnexion
+            </button>
+          </div>
           <p className="text-sm text-gray-400 dark:text-slate-500 mb-6">
             Accès réservé
           </p>
