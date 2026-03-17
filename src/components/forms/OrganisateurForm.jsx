@@ -15,6 +15,7 @@ const EMPTY_ORG = {
   ville: "",
   region: "",
   lien: "",
+  instagram: "",
   statut: "Compte en attente",
 };
 
@@ -228,6 +229,19 @@ function OrganisateurForm({ initial, onSubmit, onCancel }) {
           value={form.lien}
           onChange={handleChange}
           placeholder="https://..."
+          className={inputClass}
+        />
+      </div>
+
+      {/* Instagram */}
+      <div>
+        <label className={labelClass}>Instagram</label>
+        <input
+          type="text"
+          name="instagram"
+          value={form.instagram || ""}
+          onChange={handleChange}
+          placeholder="@skateevent"
           className={inputClass}
         />
       </div>

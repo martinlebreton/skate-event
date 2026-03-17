@@ -6,6 +6,7 @@ import OrgCard from "../components/cards/OrgCard";
 import EventCard from "../components/cards/EventCard";
 import Badge from "../components/ui/Badge";
 import EmptyState from "../components/ui/EmptyState";
+import { useEnums } from "../hooks/useEnums";
 
 // ── Vue détail organisateur ───────────────────────────────
 function OrgDetail({ org, onBack }) {
@@ -25,7 +26,7 @@ function OrgDetail({ org, onBack }) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3.5 flex items-center gap-3 bg-hatch">
+      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3.5 flex items-center gap-3">
         <button
           onClick={handleBack}
           className="text-[13px] font-medium text-teal-600 dark:text-teal-400 bg-transparent border-none cursor-pointer p-0"
@@ -82,6 +83,25 @@ function OrgDetail({ org, onBack }) {
               <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
                 <span>🔗</span>
                 <span className="truncate">{org.lien}</span>
+              </div>
+            )}
+            {org.instagram && (
+              <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                <span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
+                  </svg>
+                </span>
+                <span>{org.instagram}</span>
               </div>
             )}
             {(org.adresse || org.code_postal || org.ville) && (
@@ -167,7 +187,9 @@ function OrgDetail({ org, onBack }) {
 // ── Page liste organisateurs ──────────────────────────────
 function Organisateurs() {
   const { organisateurs, loading, fetchError } = useOrganisateurs();
+  const { regions } = useEnums();
   const [selected, setSelected] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState("");
   const location = useLocation();
 
   useEffect(() => {
@@ -182,20 +204,46 @@ function Organisateurs() {
     }
   }, [location.state, organisateurs]);
 
+  // Filtre les organisateurs par région
+  const filtered = selectedRegion
+    ? organisateurs.filter((o) => o.region === selectedRegion)
+    : organisateurs;
+
   if (selected)
     return <OrgDetail org={selected} onBack={() => setSelected(null)} />;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4 bg-hatch">
+      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4 ">
         <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100">
           ORGA
           <span className="text-teal-600 dark:text-teal-400">NISATEURS</span>
         </h1>
         <p className="text-sm text-slate-400 mt-0.5">
-          Les organisateurs d'événements
+          Les organisateurs font vivre la scène skate
         </p>
       </header>
+
+      {/* Filtre région */}
+      <div className="flex gap-2 px-3 py-2.5 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 overflow-x-auto bg-hatch">
+        <select
+          value={selectedRegion}
+          onChange={(e) => setSelectedRegion(e.target.value)}
+          className={
+            "font-sans text-[13px] font-medium px-3 py-1.5 rounded-lg border appearance-none cursor-pointer shrink-0 transition-colors duration-150 " +
+            (selectedRegion
+              ? "border-teal-600 dark:border-teal-400 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-400"
+              : "border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 text-gray-600 dark:text-slate-400")
+          }
+        >
+          <option value="">Toutes les régions</option>
+          {regions.map((region) => (
+            <option key={region} value={region}>
+              {region}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <main className="px-3 pt-3 pb-28 bg-hatch min-h-screen">
         {loading && (
@@ -206,13 +254,17 @@ function Organisateurs() {
 
         {!loading && fetchError && <EmptyState error={fetchError} />}
 
-        {!loading && !fetchError && organisateurs.length === 0 && (
-          <EmptyState icon="🏢" title="Aucun organisateur" />
+        {!loading && !fetchError && filtered.length === 0 && (
+          <EmptyState
+            icon="🏢"
+            title="Aucun organisateur"
+            subtitle={selectedRegion ? "Essaie une autre région" : ""}
+          />
         )}
 
         {!loading && !fetchError && (
           <div className="flex flex-col gap-2.5">
-            {organisateurs.map((org) => (
+            {filtered.map((org) => (
               <OrgCard
                 key={org.id}
                 org={org}

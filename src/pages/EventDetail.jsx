@@ -265,6 +265,30 @@ function EventDetail() {
                     <span className="truncate">{org.lien}</span>
                   </div>
                 )}
+                {org.instagram && (
+                  <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                    <span>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <rect x="2" y="2" width="20" height="20" rx="5" />
+                        <circle cx="12" cy="12" r="4" />
+                        <circle
+                          cx="17.5"
+                          cy="6.5"
+                          r="0.5"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </span>
+                    <span>{org.instagram}</span>
+                  </div>
+                )}
                 {(org.adresse || org.code_postal || org.ville) && (
                   <div className="flex items-start gap-2.5 text-xs text-slate-400 dark:text-slate-500">
                     <span>📍</span>

@@ -26,7 +26,7 @@ function Home() {
     setFetchError(null);
     let query = supabase
       .from("events")
-      .select("*")
+      .select("*, organisateurs(nom)")
       .gte("date", new Date().toISOString())
       .order("date", { ascending: true })
       .limit(10);

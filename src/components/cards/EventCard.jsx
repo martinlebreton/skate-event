@@ -1,5 +1,4 @@
 import Badge from "../ui/Badge";
-import { BADGE_EVENT_TYPE } from "../../constants";
 import { formatDateCourte, formatHeure } from "../../utils/dates";
 
 function EventCard({ event, onClick, index = 0, actions }) {
@@ -10,7 +9,7 @@ function EventCard({ event, onClick, index = 0, actions }) {
     <div
       onClick={() => onClick?.(event.id)}
       className={
-        "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden flex transition-shadow duration-150 mb-2" +
+        "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden flex transition-shadow duration-150 " +
         (onClick
           ? "cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50"
           : "")
@@ -36,10 +35,20 @@ function EventCard({ event, onClick, index = 0, actions }) {
             {event.location}
             {event.ville ? " · " + event.ville : ""}
           </div>
+
+          {/* Organisé par */}
+          {event.organisateurs?.nom && (
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">
+              Organisé par
+              <span className="font-medium text-teal-600 dark:text-teal-400 ml-1">
+                {event.organisateurs.nom}
+              </span>
+            </p>
+          )}
         </div>
 
-        {/* Zone d'actions optionnelle — boutons Modifier/Supprimer en admin */}
-        {actions && <div className="flex gap-2 mt-1">{actions}</div>}
+        {/* Zone d'actions optionnelle */}
+        {actions && <div className="flex flex-col gap-2 mt-1">{actions}</div>}
       </div>
 
       {/* Image droite 4:5 */}
