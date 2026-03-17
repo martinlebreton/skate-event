@@ -1,92 +1,165 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useOrganisateurs } from "../hooks/useOrganisateurs";
+import { useEventsByOrganisateur } from "../hooks/useEventsByOrganisateur";
 import OrgCard from "../components/cards/OrgCard";
+import EventCard from "../components/cards/EventCard";
 import Badge from "../components/ui/Badge";
 import EmptyState from "../components/ui/EmptyState";
 
+// ── Vue détail organisateur ───────────────────────────────
+function OrgDetail({ org, onBack }) {
+  const { upcoming, archives, loading, error } = useEventsByOrganisateur(
+    org.id,
+  );
+  const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3.5 flex items-center gap-3 bg-hatch">
+        <button
+          onClick={onBack}
+          className="text-[13px] font-medium text-teal-600 dark:text-teal-400 bg-transparent border-none cursor-pointer p-0"
+        >
+          ← Retour
+        </button>
+        <span className="text-[13px] text-gray-400 dark:text-slate-600 truncate">
+          {org.nom}
+        </span>
+      </header>
+
+      <div className="px-3 pt-3 pb-28 flex flex-col gap-4 bg-hatch min-h-screen">
+        {/* Card organisateur */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+          <div className="px-4 pt-4 pb-3 border-b border-gray-100 dark:border-slate-700">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <h1 className="text-lg font-bold tracking-tight text-gray-950 dark:text-slate-100">
+                {org.nom}
+              </h1>
+              <Badge type="statut" value={org.statut} size="sm" />
+            </div>
+            <div className="flex flex-wrap gap-2 mb-2">
+              <Badge type="typeOrg" value={org.type_org} size="sm" />
+            </div>
+            <p className="text-xs text-gray-400 dark:text-slate-500">
+              {org.ville ? org.ville : ""}
+              {org.region ? (org.ville ? " · " : "") + org.region : ""}
+            </p>
+            {org.description && (
+              <p className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed mt-3">
+                {org.description}
+              </p>
+            )}
+          </div>
+
+          {/* Contacts */}
+          <div className="px-4 py-3 flex flex-col gap-2.5">
+            {org.mail && (
+              <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                <span>✉️</span>
+                <span className="truncate">{org.mail}</span>
+              </div>
+            )}
+            {org.tel && (
+              <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                <span>📞</span>
+                <span>{org.tel}</span>
+              </div>
+            )}
+            {org.lien && (
+              <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                <span>🔗</span>
+                <span className="truncate">{org.lien}</span>
+              </div>
+            )}
+            {(org.adresse || org.code_postal || org.ville) && (
+              <div className="flex items-start gap-2.5 text-xs text-gray-400 dark:text-slate-500">
+                <span>📍</span>
+                <span>
+                  {[org.adresse, org.code_postal, org.ville]
+                    .filter(Boolean)
+                    .join(", ")}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Chargement */}
+        {loading && (
+          <p className="text-center text-sm text-gray-400 dark:text-slate-600 mt-4">
+            Chargement des événements...
+          </p>
+        )}
+
+        {/* Erreur */}
+        {!loading && error && <EmptyState error={error} />}
+
+        {/* Prochains événements */}
+        {!loading && !error && (
+          <div>
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500 mb-3 px-1">
+              Prochains événements
+              {upcoming.length > 0 && (
+                <span className="ml-2 bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded-full text-[10px]">
+                  {upcoming.length}
+                </span>
+              )}
+            </h2>
+
+            {upcoming.length === 0 ? (
+              <p className="text-sm text-gray-400 dark:text-slate-600 text-center py-4">
+                Aucun événement à venir
+              </p>
+            ) : (
+              <div className="flex flex-col gap-2.5">
+                {upcoming.map((event, index) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    index={index}
+                    onClick={(id) => navigate("/events/" + id)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Archives */}
+        {!loading && !error && archives.length > 0 && (
+          <div>
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500 mb-3 px-1">
+              Archives
+              <span className="ml-2 bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 px-2 py-0.5 rounded-full text-[10px]">
+                {archives.length}
+              </span>
+            </h2>
+            <div className="flex flex-col gap-2.5 opacity-60">
+              {archives.map((event, index) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  index={index}
+                  onClick={(id) => navigate("/events/" + id)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Page liste organisateurs ──────────────────────────────
 function Organisateurs() {
   const { organisateurs, loading, fetchError } = useOrganisateurs();
   const [selected, setSelected] = useState(null);
 
-  // ── Vue détail ──
   if (selected)
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-        <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3.5 flex items-center gap-3 bg-hatch">
-          <button
-            onClick={() => setSelected(null)}
-            className="text-[13px] font-medium text-teal-600 dark:text-teal-400 bg-transparent border-none cursor-pointer p-0"
-          >
-            ← Retour
-          </button>
-          <span className="text-[13px] text-gray-400 dark:text-slate-600 truncate">
-            {selected.nom}
-          </span>
-        </header>
+    return <OrgDetail org={selected} onBack={() => setSelected(null)} />;
 
-        <div className="px-3 pt-3 pb-28 flex flex-col gap-3 bg-hatch min-h-screen">
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
-            {/* En-tête */}
-            <div className="px-4 pt-4 pb-3 border-b border-gray-100 dark:border-slate-700">
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <h1 className="text-lg font-bold tracking-tight text-gray-950 dark:text-slate-100">
-                  {selected.nom}
-                </h1>
-                <Badge type="statut" value={selected.statut} size="sm" />
-              </div>
-              <div className="flex flex-wrap gap-2 mb-2">
-                <Badge type="typeOrg" value={selected.type_org} size="sm" />
-              </div>
-              <p className="text-xs text-gray-400 dark:text-slate-500">
-                {selected.ville ? selected.ville : ""}
-                {selected.region
-                  ? (selected.ville ? " · " : "") + selected.region
-                  : ""}
-              </p>
-              {selected.description && (
-                <p className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed mt-3">
-                  {selected.description}
-                </p>
-              )}
-            </div>
-
-            {/* Contacts */}
-            <div className="px-4 py-3 flex flex-col gap-2.5">
-              {selected.mail && (
-                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                  <span>✉️</span>
-                  <span className="truncate">{selected.mail}</span>
-                </div>
-              )}
-              {selected.tel && (
-                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                  <span>📞</span>
-                  <span>{selected.tel}</span>
-                </div>
-              )}
-              {selected.lien && (
-                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                  <span>🔗</span>
-                  <span className="truncate">{selected.lien}</span>
-                </div>
-              )}
-              {(selected.adresse || selected.code_postal || selected.ville) && (
-                <div className="flex items-start gap-2.5 text-xs text-gray-400 dark:text-slate-500">
-                  <span>📍</span>
-                  <span>
-                    {[selected.adresse, selected.code_postal, selected.ville]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-
-  // ── Vue liste ──
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4 bg-hatch">
