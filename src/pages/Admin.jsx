@@ -213,26 +213,41 @@ function Admin() {
                       key={event.id}
                       event={event}
                       actions={
-                        <div className="flex gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelected(event);
-                              setMode("edit");
-                            }}
-                            className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
-                          >
-                            Modifier
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeleteConfirm({ type: "event", item: event });
-                            }}
-                            className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
-                          >
-                            Supprimer
-                          </button>
+                        <div className="flex flex-col gap-2">
+                          {/* Organisateur */}
+                          {event.organisateurs && (
+                            <p className="text-xs text-slate-400 dark:text-slate-500">
+                              Organisé par
+                              <span className="font-medium text-teal-600 dark:text-teal-400 ml-1">
+                                {event.organisateurs.nom}
+                              </span>
+                            </p>
+                          )}
+                          {/* Boutons */}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelected(event);
+                                setMode("edit");
+                              }}
+                              className="text-xs bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400 px-3 py-1.5 rounded-lg font-medium hover:bg-teal-100 dark:hover:bg-teal-900 transition-colors"
+                            >
+                              Modifier
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteConfirm({
+                                  type: "event",
+                                  item: event,
+                                });
+                              }}
+                              className="text-xs bg-red-50 dark:bg-red-950 text-red-500 px-3 py-1.5 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900 transition-colors"
+                            >
+                              Supprimer
+                            </button>
+                          </div>
                         </div>
                       }
                     />
