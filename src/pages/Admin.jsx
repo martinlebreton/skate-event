@@ -5,7 +5,7 @@ import { useEnums } from "../hooks/useEnums";
 import { useEvents } from "../hooks/useEvents";
 import { useOrganisateurs } from "../hooks/useOrganisateurs";
 import EventForm, { EMPTY_EVENT } from "../components/forms/EventForm";
-import OrganisateurForm from "../components/OrganisateurForm";
+import OrganisateurForm from "../components/forms/OrganisateurForm";
 import EventCard from "../components/cards/EventCard";
 import OrgCard from "../components/cards/OrgCard";
 import EmptyState from "../components/ui/EmptyState";

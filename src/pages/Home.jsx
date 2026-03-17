@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import EventCard from "../components/cards/EventCard";
-import Filters from "../components/Filters";
+import Filters from "../components/ui/Filters";
 import EmptyState from "../components/ui/EmptyState";
 
 function Home() {

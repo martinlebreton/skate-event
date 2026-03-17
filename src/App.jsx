@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import EventDetail from "./pages/EventDetail";
 import Admin from "./pages/Admin";
 import Organisateurs from "./pages/Organisateurs";
-import TabBar from "./components/TabBar";
+import TabBar from "./components/ui/TabBar";
 
 function App() {
   return (

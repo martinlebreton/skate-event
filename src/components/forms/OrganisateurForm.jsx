@@ -1,11 +1,6 @@
 import { useState } from "react";
-import { useEnums } from "../hooks/useEnums";
-import {
-  inputClass,
-  labelClass,
-  btnPrimary,
-  btnSecondary,
-} from "./forms/formStyles";
+import { useEnums } from "../../hooks/useEnums";
+import { inputClass, labelClass, btnPrimary, btnSecondary } from "./formStyles";
 
 const EMPTY_ORG = {
   nom: "",

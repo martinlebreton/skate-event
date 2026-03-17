@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ImageUpload from "../ImageUpload";
+import ImageUpload from "../ui/ImageUpload";
 import { inputClass, labelClass, btnPrimary, btnSecondary } from "./formStyles";
 
 const EMPTY_EVENT = {
