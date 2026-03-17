@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 
 export function useEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Charge automatiquement au montage
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   async function fetchEvents() {
     setLoading(true);
@@ -18,12 +23,11 @@ export function useEvents() {
 
   async function createEvent(form) {
     const { organisateurs: _, ...formClean } = form;
-    const { error } = await supabase.from("events").insert([
-      {
-        ...formClean,
-        organisateur_id: formClean.organisateur_id || null,
-      },
-    ]);
+    const { error } = await supabase
+      .from("events")
+      .insert([
+        { ...formClean, organisateur_id: formClean.organisateur_id || null },
+      ]);
     if (!error) await fetchEvents();
     return error;
   }

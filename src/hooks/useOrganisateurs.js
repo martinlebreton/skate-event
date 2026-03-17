@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 
 export function useOrganisateurs() {
   const [organisateurs, setOrganisateurs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Charge automatiquement au montage
+  useEffect(() => {
+    fetchOrganisateurs();
+  }, []);
 
   async function fetchOrganisateurs() {
     setLoading(true);
@@ -17,12 +22,9 @@ export function useOrganisateurs() {
   }
 
   async function createOrganisateur(form) {
-    const { error } = await supabase.from("organisateurs").insert([
-      {
-        ...form,
-        region: form.region || null,
-      },
-    ]);
+    const { error } = await supabase
+      .from("organisateurs")
+      .insert([{ ...form, region: form.region || null }]);
     if (!error) await fetchOrganisateurs();
     return error;
   }
@@ -30,10 +32,7 @@ export function useOrganisateurs() {
   async function updateOrganisateur(id, form) {
     const { error } = await supabase
       .from("organisateurs")
-      .update({
-        ...form,
-        region: form.region || null,
-      })
+      .update({ ...form, region: form.region || null })
       .eq("id", id);
     if (!error) await fetchOrganisateurs();
     return error;
