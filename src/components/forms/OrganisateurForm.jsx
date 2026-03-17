@@ -5,6 +5,8 @@ import { inputClass, labelClass, btnPrimary, btnSecondary } from "./formStyles";
 const EMPTY_ORG = {
   nom: "",
   type_org: "",
+  contact_name: "",
+  contact_lastname: "",
   mail: "",
   tel: "",
   description: "",
@@ -57,7 +59,7 @@ function OrganisateurForm({ initial, onSubmit, onCancel }) {
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 space-y-4">
-      {/* Nom */}
+      {/* Nom organisation */}
       <div>
         <label className={labelClass}>
           Nom <span className="text-red-500">*</span>
@@ -109,6 +111,29 @@ function OrganisateurForm({ initial, onSubmit, onCancel }) {
             </option>
           ))}
         </select>
+      </div>
+
+      {/* Contact — prénom + nom */}
+      <div>
+        <label className={labelClass}>Contact</label>
+        <div className="grid grid-cols-2 gap-3">
+          <input
+            type="text"
+            name="contact_name"
+            value={form.contact_name || ""}
+            onChange={handleChange}
+            placeholder="Prénom"
+            className={inputClass}
+          />
+          <input
+            type="text"
+            name="contact_lastname"
+            value={form.contact_lastname || ""}
+            onChange={handleChange}
+            placeholder="Nom"
+            className={inputClass}
+          />
+        </div>
       </div>
 
       {/* Région */}

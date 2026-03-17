@@ -40,7 +40,7 @@ function Contact() {
             </p>
           </div>
 
-          <p className="text-xs text-slate-400 dark:text-slate-600 leading-relaxed">
+          <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
             Nous vous répondrons dès que possible, là on skate !
           </p>
         </div>
