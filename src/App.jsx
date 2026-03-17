@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import EventDetail from "./pages/EventDetail";
 import Admin from "./pages/Admin";
 import Organisateurs from "./pages/Organisateurs";
+import Contact from "./pages/Contact";
 import TabBar from "./components/ui/TabBar";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/events/:id" element={<EventDetail />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/organisateurs" element={<Organisateurs />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
       <TabBar />
     </BrowserRouter>

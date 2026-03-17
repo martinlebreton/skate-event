@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { BADGE_EVENT_TYPE, BADGE_STATUT } from "../constants";
 import { formatAgenda } from "../utils/dates";
+import { BADGE_EVENT_TYPE, BADGE_STATUT } from "../constants";
+import Badge from "../components/ui/Badge";
 
 function EventDetail() {
   const { id } = useParams();
@@ -28,27 +29,19 @@ function EventDetail() {
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
-        <p className="text-sm text-gray-400 dark:text-slate-600">
-          Chargement...
-        </p>
+        <p className="text-sm text-slate-400">Chargement...</p>
       </div>
     );
 
   if (!event)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
-        <p className="text-sm text-gray-400 dark:text-slate-600">
-          Événement introuvable
-        </p>
+        <p className="text-sm text-slate-400">Événement introuvable</p>
       </div>
     );
 
-  // ── Formatage des dates ──────────────────────────────────
-  const debut = new Date(event.date);
-  const fin = event.date_fin ? new Date(event.date_fin) : null;
-  const memeJour = fin && debut.toDateString() === fin.toDateString();
+  const org = event.organisateurs;
 
-  // ── Infos pratiques ──────────────────────────────────────
   const infosPratiques = [
     { key: "infos_bar", label: "Bar", icon: "🍺" },
     { key: "infos_restauration", label: "Restauration", icon: "🍔" },
@@ -56,7 +49,14 @@ function EventDetail() {
     { key: "infos_sanitaire", label: "Sanitaires", icon: "🚻" },
   ].filter(({ key }) => !!event[key]);
 
-  const org = event.organisateurs;
+  // Classe partagée pour les labels de section
+  const sectionLabel =
+    "text-[12px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-400 mb-1";
+
+  // Séparateur
+  const Divider = () => (
+    <div className="border-t border-gray-100 dark:border-slate-700" />
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
@@ -68,7 +68,7 @@ function EventDetail() {
         >
           ← Retour
         </button>
-        <span className="text-[13px] text-gray-400 dark:text-slate-600 truncate">
+        <span className="text-[13px] text-slate-400 dark:text-slate-400 truncate">
           {event.title}
         </span>
       </header>
@@ -106,7 +106,10 @@ function EventDetail() {
         {/* Badge + Titre */}
         <div>
           <span
-            className={`inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 ${BADGE_EVENT_TYPE[event.type] || "bg-gray-100 text-gray-700"}`}
+            className={
+              "inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 " +
+              (BADGE_EVENT_TYPE[event.type] || "bg-gray-100 text-gray-700")
+            }
           >
             {event.type}
           </span>
@@ -115,146 +118,164 @@ function EventDetail() {
           </h1>
         </div>
 
-        {/* Bloc date agenda */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
-          <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2">
-            📅 Date
-          </dt>
-          <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100 leading-relaxed whitespace-pre-line ">
-            {formatAgenda(event.date, event.date_fin)}
-          </dd>
-        </div>
-
-        {/* Bloc lieu */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-0.5">
-                📍 Lieu
-              </dt>
-              <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100">
-                {event.location}
-                {event.ville ? ", " + event.ville : ""}
-              </dd>
-            </div>
-            <div className="col-span-2">
-              <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-0.5">
-                🗺️ Région
-              </dt>
-              <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100">
-                {event.region}
-              </dd>
-            </div>
-          </div>
-        </div>
-
-        {/* Description */}
-        {event.description && (
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2">
-              Description
-            </dt>
-            <p className="text-[14px] text-gray-600 dark:text-slate-400 leading-relaxed">
-              {event.description}
+        {/* Bloc infos */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+          {/* Date */}
+          <div className="px-4 py-3">
+            <p className={sectionLabel}>Date</p>
+            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-200 leading-relaxed whitespace-pre-line capitalize">
+              {formatAgenda(event.date, event.date_fin)}
             </p>
           </div>
-        )}
 
-        {/* Infos pratiques */}
-        {infosPratiques.length > 0 && (
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-3">
-              Infos pratiques
-            </dt>
-            <div className="flex flex-wrap gap-2">
-              {infosPratiques.map(({ key, label, icon }) => (
-                <span
-                  key={key}
-                  className="inline-flex items-center gap-1.5 text-sm bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 px-3 py-1.5 rounded-full font-medium"
-                >
-                  <span>{icon}</span>
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+          <Divider />
 
-        {/* Infos complémentaires */}
-        {event.infos_complementaires && (
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2">
-              Informations complémentaires
-            </dt>
-            <p className="text-[14px] text-gray-600 dark:text-slate-400 leading-relaxed">
-              {event.infos_complementaires}
+          {/* Lieu */}
+          <div className="px-4 py-3">
+            <p className={sectionLabel}>Lieu</p>
+            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-200">
+              {event.location}
+              {event.ville ? ", " + event.ville : ""}
+            </p>
+
+            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-200">
+              {event.region}
             </p>
           </div>
-        )}
+
+          {/* Description */}
+          {event.description && (
+            <>
+              <Divider />
+              <div className="px-4 py-3">
+                <p className={sectionLabel}>Description</p>
+                <p className="text-[14px] text-gray-600 dark:text-slate-200 leading-relaxed">
+                  {event.description}
+                </p>
+              </div>
+            </>
+          )}
+
+          {/* Infos pratiques */}
+          {infosPratiques.length > 0 && (
+            <>
+              <Divider />
+              <div className="px-4 py-3">
+                <p className={sectionLabel}>Infos pratiques</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {infosPratiques.map(({ key, label, icon }) => (
+                    <span
+                      key={key}
+                      className="inline-flex items-center gap-1.5 text-sm bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 px-3 py-1.5 rounded-full font-medium"
+                    >
+                      <span>{icon}</span>
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Infos complémentaires */}
+          {event.infos_complementaires && (
+            <>
+              <Divider />
+              <div className="px-4 py-3">
+                <p className={sectionLabel}>Informations complémentaires</p>
+                <p className="text-[14px] text-gray-600 dark:text-slate-200 leading-relaxed">
+                  {event.infos_complementaires}
+                </p>
+              </div>
+            </>
+          )}
+        </div>
 
         {/* Organisateur */}
         {org && (
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
-            {/* En-tête */}
-            <div className="px-4 pt-4 pb-3 border-b border-gray-100 dark:border-slate-700">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
-                    {org.nom}
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">
-                    {org.type_org}
-                    {org.ville ? " · " + org.ville : ""}
-                    {org.region ? " · " + org.region : ""}
-                  </p>
+          <div>
+            <p className="text-[12px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2 px-1">
+              Organisé par
+            </p>
+            <div
+              onClick={() =>
+                navigate("/organisateurs", { state: { selectedOrgId: org.id } })
+              }
+              className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50 transition-shadow"
+            >
+              {/* En-tête */}
+              <div className="px-4 pt-4 pb-3 border-b border-gray-100 dark:border-slate-700">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
+                      {org.nom}
+                    </p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                      {org.type_org}
+                      {org.ville ? " · " + org.ville : ""}
+                      {org.region ? " · " + org.region : ""}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span
+                      className={
+                        "text-[10px] font-medium px-2 py-0.5 rounded-full " +
+                        (BADGE_STATUT[org.statut] || "")
+                      }
+                    >
+                      {org.statut}
+                    </span>
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="text-slate-300 dark:text-slate-600"
+                    >
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </div>
                 </div>
-                <span
-                  className={
-                    "text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 " +
-                    (BADGE_STATUT[org.statut] || "")
-                  }
-                >
-                  {org.statut}
-                </span>
+                {org.description && (
+                  <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed mt-2 line-clamp-2">
+                    {org.description}
+                  </p>
+                )}
               </div>
 
-              {org.description && (
-                <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed mt-2">
-                  {org.description}
-                </p>
-              )}
-            </div>
-
-            {/* Contacts */}
-            <div className="px-4 py-3 flex flex-col gap-2">
-              {org.mail && (
-                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                  <span>✉️</span>
-                  <span className="truncate">{org.mail}</span>
-                </div>
-              )}
-              {org.tel && (
-                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                  <span>📞</span>
-                  <span>{org.tel}</span>
-                </div>
-              )}
-              {org.lien && (
-                <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                  <span>🔗</span>
-                  <span className="truncate">{org.lien}</span>
-                </div>
-              )}
-              {(org.adresse || org.code_postal || org.ville) && (
-                <div className="flex items-start gap-2.5 text-xs text-gray-400 dark:text-slate-500">
-                  <span>📍</span>
-                  <span>
-                    {[org.adresse, org.code_postal, org.ville]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </span>
-                </div>
-              )}
+              {/* Contacts */}
+              <div className="px-4 py-3 flex flex-col gap-2">
+                {org.mail && (
+                  <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                    <span>✉️</span>
+                    <span className="truncate">{org.mail}</span>
+                  </div>
+                )}
+                {org.tel && (
+                  <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                    <span>📞</span>
+                    <span>{org.tel}</span>
+                  </div>
+                )}
+                {org.lien && (
+                  <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
+                    <span>🔗</span>
+                    <span className="truncate">{org.lien}</span>
+                  </div>
+                )}
+                {(org.adresse || org.code_postal || org.ville) && (
+                  <div className="flex items-start gap-2.5 text-xs text-slate-400 dark:text-slate-500">
+                    <span>📍</span>
+                    <span>
+                      {[org.adresse, org.code_postal, org.ville]
+                        .filter(Boolean)
+                        .join(", ")}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
