@@ -69,7 +69,7 @@ function TabBar() {
                 "text-[10px] font-medium tracking-wide " +
                 (isActive
                   ? "text-teal-600 dark:text-teal-400"
-                  : "text-gray-400 dark:text-slate-600")
+                  : "text-gray-400 dark:text-slate-400")
               }
             >
               {tab.label}
@@ -107,7 +107,7 @@ function TabBar() {
             <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
           </svg>
         )}
-        <span className="text-[10px] font-medium tracking-wide text-gray-400 dark:text-slate-600">
+        <span className="text-[10px] font-medium tracking-wide text-gray-400 dark:text-slate-400">
           {dark ? "Light" : "Dark"}
         </span>
       </button>

@@ -1,16 +1,10 @@
 import Badge from "../ui/Badge";
 import { BADGE_EVENT_TYPE } from "../../constants";
+import { formatDateCourte, formatHeure } from "../../utils/dates";
 
 function EventCard({ event, onClick, index = 0, actions }) {
-  const formattedDate = new Date(event.date).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-  const formattedTime = new Date(event.date).toLocaleTimeString("fr-FR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const formattedDate = formatDateCourte(event.date);
+  const formattedTime = formatHeure(event.date);
 
   return (
     <div

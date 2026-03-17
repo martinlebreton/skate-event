@@ -12,6 +12,7 @@ import EmptyState from "../components/ui/EmptyState";
 import DeleteModal from "../components/ui/DeleteModal";
 import { inputClass } from "../components/forms/formStyles";
 import { BADGE_STATUT } from "../constants";
+import { formatDateCourte } from "../utils/dates";
 
 function Admin() {
   const navigate = useNavigate();

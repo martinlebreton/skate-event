@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { BADGE_EVENT_TYPE, BADGE_STATUT } from "../constants";
+import { formatAgenda } from "../utils/dates";
 
 function EventDetail() {
   const { id } = useParams();
@@ -46,50 +47,6 @@ function EventDetail() {
   const debut = new Date(event.date);
   const fin = event.date_fin ? new Date(event.date_fin) : null;
   const memeJour = fin && debut.toDateString() === fin.toDateString();
-
-  function formatJour(date) {
-    return date.toLocaleDateString("fr-FR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  }
-
-  function formatHeure(date) {
-    return date
-      .toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-      .replace(":", "h");
-  }
-
-  function formatAgenda() {
-    if (!fin) {
-      return "Le " + formatJour(debut) + " à " + formatHeure(debut);
-    }
-    if (memeJour) {
-      return (
-        "Le " +
-        formatJour(debut) +
-        "\nde " +
-        formatHeure(debut) +
-        " à " +
-        formatHeure(fin)
-      );
-    }
-    return (
-      "Du " +
-      formatJour(debut) +
-      " à " +
-      formatHeure(debut) +
-      "\nau " +
-      formatJour(fin) +
-      " à " +
-      formatHeure(fin)
-    );
-  }
 
   // ── Infos pratiques ──────────────────────────────────────
   const infosPratiques = [
@@ -163,8 +120,8 @@ function EventDetail() {
           <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-2">
             📅 Date
           </dt>
-          <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100 leading-relaxed whitespace-pre-line capitalize">
-            {formatAgenda()}
+          <dd className="text-[14px] font-medium text-gray-900 dark:text-slate-100 leading-relaxed whitespace-pre-line ">
+            {formatAgenda(event.date, event.date_fin)}
           </dd>
         </div>
 
