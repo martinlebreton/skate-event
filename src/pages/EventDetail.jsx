@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { BADGE_EVENT_TYPE, BADGE_STATUT } from "../constants";
 
 function EventDetail() {
   const { id } = useParams();
@@ -22,22 +23,6 @@ function EventDetail() {
     else setEvent(data);
     setLoading(false);
   }
-
-  const badgeClass = {
-    Street: "bg-teal-700 dark:bg-teal-400 text-white dark:text-slate-900",
-    Bowl: "bg-amber-700 dark:bg-amber-400 text-white dark:text-slate-900",
-    Ramp: "bg-violet-700 dark:bg-violet-400 text-white dark:text-slate-900",
-  };
-
-  const statutBadge = {
-    "Compte validé":
-      "bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400",
-    "Compte vérifié":
-      "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400",
-    "Compte bloqué": "bg-red-50 dark:bg-red-950 text-red-500",
-    "Compte en attente":
-      "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400",
-  };
 
   if (loading)
     return (
@@ -164,7 +149,7 @@ function EventDetail() {
         {/* Badge + Titre */}
         <div>
           <span
-            className={`inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 ${badgeClass[event.type] || "bg-gray-100 text-gray-700"}`}
+            className={`inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 ${BADGE_EVENT_TYPE[event.type] || "bg-gray-100 text-gray-700"}`}
           >
             {event.type}
           </span>
@@ -269,7 +254,7 @@ function EventDetail() {
                 <span
                   className={
                     "text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 " +
-                    (statutBadge[org.statut] || "")
+                    (BADGE_STATUT[org.statut] || "")
                   }
                 >
                   {org.statut}

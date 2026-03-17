@@ -1,4 +1,5 @@
 import Badge from "../ui/Badge";
+import { BADGE_EVENT_TYPE } from "../../constants";
 
 function EventCard({ event, onClick, index = 0, actions }) {
   const formattedDate = new Date(event.date).toLocaleDateString("fr-FR", {

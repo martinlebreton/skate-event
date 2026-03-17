@@ -1,4 +1,5 @@
 import Badge from "../ui/Badge";
+import { BADGE_STATUT, BADGE_TYPE_ORG } from "../../constants";
 
 function OrgCard({ org, onClick, actions }) {
   return (
