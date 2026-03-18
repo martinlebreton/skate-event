@@ -7,6 +7,7 @@ import EventCard from "../components/cards/EventCard";
 import Filters from "../components/ui/Filters";
 import EmptyState from "../components/ui/EmptyState";
 import PageHeader from "../components/ui/PageHeader";
+import { bg } from "../components/ui/designTokens";
 
 function Home() {
   const [events, setEvents] = useState([]);
@@ -44,11 +45,46 @@ function Home() {
     navigate("/admin", { state: { editEvent: event } });
   }
 
+  const DarkModeButton = () => (
+    <button
+      onClick={toggleDark}
+      className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+    >
+      {dark ? (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-400"
+        >
+          <circle cx="12" cy="12" r="5" />
+          <path d="M12 3v1m0 16v1M4.22 4.22l.71.71m12.73 12.73.71.71M3 12h1m16 0h1M4.93 19.07l.71-.71M18.36 5.64l.71-.71" />
+        </svg>
+      ) : (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className="text-slate-400"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
+        </svg>
+      )}
+      <span className="text-[10px] font-medium text-slate-400">
+        {dark ? "Light" : "Dark"}
+      </span>
+    </button>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      {/* Zone fixe en haut */}
+    <div className={"min-h-screen " + bg.page}>
       <div className="sticky top-0 z-40">
-        {/* Header */}
         <PageHeader
           title="SKATE"
           accent="EVENT"
@@ -60,45 +96,8 @@ function Home() {
               className="w-10 h-10 rounded-lg shrink-0"
             />
           }
-          right={
-            <button
-              onClick={toggleDark}
-              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
-            >
-              {dark ? (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="text-slate-400"
-                >
-                  <circle cx="12" cy="12" r="5" />
-                  <path d="M12 3v1m0 16v1M4.22 4.22l.71.71m12.73 12.73.71.71M3 12h1m16 0h1M4.93 19.07l.71-.71M18.36 5.64l.71-.71" />
-                </svg>
-              ) : (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="text-slate-400"
-                >
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
-                </svg>
-              )}
-              <span className="text-[10px] font-medium text-slate-400">
-                {dark ? "Light" : "Dark"}
-              </span>
-            </button>
-          }
+          right={<DarkModeButton />}
         />
-
-        {/* Filtres */}
         <Filters
           selectedRegion={selectedRegion}
           selectedType={selectedType}
@@ -107,16 +106,13 @@ function Home() {
         />
       </div>
 
-      {/* Liste */}
-      <main className="px-3 pt-3 pb-28 bg-hatch min-h-screen">
+      <main className="px-3 pt-3 pb-28 min-h-screen">
         {loading && (
-          <p className="text-center text-sm text-gray-400 dark:text-slate-600 mt-16">
+          <p className="text-center text-sm text-slate-400 dark:text-slate-600 mt-16">
             Chargement...
           </p>
         )}
-
         {!loading && fetchError && <EmptyState error={fetchError} />}
-
         {!loading && !fetchError && events.length === 0 && (
           <EmptyState
             icon="🛹"
@@ -124,7 +120,6 @@ function Home() {
             subtitle="Essaie d'autres filtres"
           />
         )}
-
         {!loading && !fetchError && (
           <div className="flex flex-col gap-2.5">
             {events.map((event, index) => (

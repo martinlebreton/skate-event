@@ -5,6 +5,7 @@ import { useEnums } from "../hooks/useEnums";
 import OrgCard from "../components/cards/OrgCard";
 import EmptyState from "../components/ui/EmptyState";
 import PageHeader from "../components/ui/PageHeader";
+import { bg } from "../components/ui/designTokens";
 
 function Organisateurs() {
   const { organisateurs, loading, fetchError } = useOrganisateurs();
@@ -17,16 +18,13 @@ function Organisateurs() {
     : organisateurs;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      {/* Header sticky */}
+    <div className={"min-h-screen " + bg.page}>
       <div className="sticky top-0 z-40">
         <PageHeader
           title="ORGA"
           accent="NISATEURS"
           subtitle="Les organisateurs d'événements"
         />
-
-        {/* Filtre région */}
         <div className="flex gap-2 px-3 py-2.5 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
           <select
             value={selectedRegion}
@@ -54,9 +52,7 @@ function Organisateurs() {
             Chargement...
           </p>
         )}
-
         {!loading && fetchError && <EmptyState error={fetchError} />}
-
         {!loading && !fetchError && filtered.length === 0 && (
           <EmptyState
             icon="🏢"
@@ -64,7 +60,6 @@ function Organisateurs() {
             subtitle={selectedRegion ? "Essaie une autre région" : ""}
           />
         )}
-
         {!loading && !fetchError && (
           <div className="flex flex-col gap-2.5">
             {filtered.map((org) => (
