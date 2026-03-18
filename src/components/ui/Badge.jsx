@@ -2,6 +2,7 @@ import {
   BADGE_EVENT_TYPE,
   BADGE_STATUT,
   BADGE_TYPE_ORG,
+  BADGE_TARIF,
 } from "../../constants";
 
 function Badge({ type, value, size = "md" }) {
@@ -9,6 +10,7 @@ function Badge({ type, value, size = "md" }) {
     eventType: BADGE_EVENT_TYPE,
     statut: BADGE_STATUT,
     typeOrg: BADGE_TYPE_ORG,
+    tarif: BADGE_TARIF,
   };
 
   const style =

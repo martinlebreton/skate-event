@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useEnums } from "../../hooks/useEnums";
 import ImageUpload from "../ui/ImageUpload";
 import { inputClass, labelClass, btnPrimary, btnSecondary } from "./formStyles";
 
-const EMPTY_EVENT = {
+export const EMPTY_EVENT = {
   title: "",
   description: "",
   date: "",
@@ -18,6 +19,7 @@ const EMPTY_EVENT = {
   infos_parking: false,
   infos_sanitaire: false,
   infos_complementaires: "",
+  event_tarif: "",
 };
 
 function EventForm({
@@ -28,6 +30,7 @@ function EventForm({
   types,
   organisateurs,
 }) {
+  const { tarifs } = useEnums();
   const [form, setForm] = useState(initial || EMPTY_EVENT);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -74,7 +77,6 @@ function EventForm({
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 space-y-4">
-      {/* Titre */}
       <div>
         <label className={labelClass}>
           Titre <span className="text-red-500">*</span>
@@ -89,7 +91,6 @@ function EventForm({
         />
       </div>
 
-      {/* Description */}
       <div>
         <label className={labelClass}>Description</label>
         <textarea
@@ -102,7 +103,6 @@ function EventForm({
         />
       </div>
 
-      {/* Dates */}
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelClass}>
@@ -128,7 +128,6 @@ function EventForm({
         </div>
       </div>
 
-      {/* Lieu */}
       <div>
         <label className={labelClass}>
           Lieu <span className="text-red-500">*</span>
@@ -143,7 +142,6 @@ function EventForm({
         />
       </div>
 
-      {/* Ville */}
       <div>
         <label className={labelClass}>Ville</label>
         <input
@@ -156,7 +154,6 @@ function EventForm({
         />
       </div>
 
-      {/* Région + Type */}
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelClass}>
@@ -196,7 +193,24 @@ function EventForm({
         </div>
       </div>
 
-      {/* Organisateur */}
+      {/* Tarif */}
+      <div>
+        <label className={labelClass}>Tarif</label>
+        <select
+          name="event_tarif"
+          value={form.event_tarif || ""}
+          onChange={handleChange}
+          className={inputClass}
+        >
+          <option value="">Non renseigné</option>
+          {tarifs.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div>
         <label className={labelClass}>Organisateur</label>
         <select
@@ -214,7 +228,6 @@ function EventForm({
         </select>
       </div>
 
-      {/* Infos pratiques */}
       <div>
         <label className={labelClass}>Infos pratiques</label>
         <div className="grid grid-cols-2 gap-2 mt-2">
@@ -241,7 +254,6 @@ function EventForm({
         </div>
       </div>
 
-      {/* Infos complémentaires */}
       <div>
         <label className={labelClass}>Infos complémentaires</label>
         <textarea
@@ -254,7 +266,6 @@ function EventForm({
         />
       </div>
 
-      {/* Image actuelle */}
       {form.image_url && (
         <div>
           <label className={labelClass}>Image actuelle</label>
@@ -267,7 +278,6 @@ function EventForm({
         </div>
       )}
 
-      {/* Upload image */}
       <ImageUpload onUpload={(url) => setForm({ ...form, image_url: url })} />
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -288,5 +298,4 @@ function EventForm({
   );
 }
 
-export { EMPTY_EVENT };
 export default EventForm;

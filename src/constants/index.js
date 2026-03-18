@@ -66,3 +66,9 @@ export const BADGE_TYPE_ORG = {
     "bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300",
   Skateshop: "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400",
 };
+
+// ── Styles badges tarif ───────────────────────────────────
+export const BADGE_TARIF = {
+  Gratuit: "bg-green-200 dark:bg-green-800 text-green-600 dark:text-green-500",
+  Payant: "bg-amber-200 dark:bg-amber-800 text-amber-600 dark:text-amber-500",
+};

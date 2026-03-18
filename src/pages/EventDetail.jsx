@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { formatAgenda } from "../utils/dates";
-import { BADGE_EVENT_TYPE, BADGE_STATUT } from "../constants";
-import Badge from "../components/ui/Badge";
+import { BADGE_EVENT_TYPE, BADGE_STATUT, BADGE_TARIF } from "../constants";
 
 function EventDetail() {
   const { id } = useParams();
@@ -49,11 +48,8 @@ function EventDetail() {
     { key: "infos_sanitaire", label: "Sanitaires", icon: "🚻" },
   ].filter(({ key }) => !!event[key]);
 
-  // Classe partagée pour les labels de section
   const sectionLabel =
-    "text-[12px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-400 mb-1";
-
-  // Séparateur
+    "text-[12px] font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500 mb-1";
   const Divider = () => (
     <div className="border-t border-gray-100 dark:border-slate-700" />
   );
@@ -61,19 +57,19 @@ function EventDetail() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header retour */}
-      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3.5 flex items-center gap-3 bg-hatch">
+      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3.5 flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
           className="text-[13px] font-medium text-teal-600 dark:text-teal-400 bg-transparent border-none cursor-pointer p-0"
         >
           ← Retour
         </button>
-        <span className="text-[13px] text-slate-400 dark:text-slate-400 truncate">
+        <span className="text-[13px] text-slate-400 dark:text-slate-600 truncate">
           {event.title}
         </span>
       </header>
 
-      <div className="px-3 pt-3 pb-28 flex flex-col gap-3 bg-hatch min-h-screen">
+      <div className="px-3 pt-3 pb-28 flex flex-col gap-3 min-h-screen">
         {/* Image 4:5 */}
         {event.image_url ? (
           <img
@@ -103,16 +99,29 @@ function EventDetail() {
           </div>
         )}
 
-        {/* Badge + Titre */}
+        {/* Badges + Titre */}
         <div>
-          <span
-            className={
-              "inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-2 " +
-              (BADGE_EVENT_TYPE[event.type] || "bg-gray-100 text-gray-700")
-            }
-          >
-            {event.type}
-          </span>
+          <div className="flex items-center gap-2 mb-2">
+            <span
+              className={
+                "inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full " +
+                (BADGE_EVENT_TYPE[event.type] || "bg-gray-100 text-gray-700")
+              }
+            >
+              {event.type}
+            </span>
+            {event.event_tarif && (
+              <span
+                className={
+                  "inline-flex items-center text-[11px] font-semibold px-2.5 py-0.5 rounded-full " +
+                  (BADGE_TARIF[event.event_tarif] ||
+                    "bg-gray-100 text-gray-700")
+                }
+              >
+                {event.event_tarif}
+              </span>
+            )}
+          </div>
           <h1 className="text-2xl font-bold tracking-tight text-balance text-gray-950 dark:text-slate-100 leading-tight">
             {event.title}
           </h1>
@@ -120,43 +129,44 @@ function EventDetail() {
 
         {/* Bloc infos */}
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
-          {/* Date */}
           <div className="px-4 py-3">
             <p className={sectionLabel}>Date</p>
-            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-200 leading-relaxed whitespace-pre-line capitalize">
+            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-100 leading-relaxed whitespace-pre-line capitalize">
               {formatAgenda(event.date, event.date_fin)}
             </p>
           </div>
 
           <Divider />
 
-          {/* Lieu */}
           <div className="px-4 py-3">
             <p className={sectionLabel}>Lieu</p>
-            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-200">
+            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-100">
               {event.location}
               {event.ville ? ", " + event.ville : ""}
             </p>
+          </div>
 
-            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-200">
+          <Divider />
+
+          <div className="px-4 py-3">
+            <p className={sectionLabel}>Région</p>
+            <p className="text-[14px] font-medium text-gray-900 dark:text-slate-100">
               {event.region}
             </p>
           </div>
 
-          {/* Description */}
           {event.description && (
             <>
               <Divider />
               <div className="px-4 py-3">
                 <p className={sectionLabel}>Description</p>
-                <p className="text-[14px] text-gray-600 dark:text-slate-200 leading-relaxed">
+                <p className="text-[14px] text-gray-600 dark:text-slate-400 leading-relaxed">
                   {event.description}
                 </p>
               </div>
             </>
           )}
 
-          {/* Infos pratiques */}
           {infosPratiques.length > 0 && (
             <>
               <Divider />
@@ -177,13 +187,12 @@ function EventDetail() {
             </>
           )}
 
-          {/* Infos complémentaires */}
           {event.infos_complementaires && (
             <>
               <Divider />
               <div className="px-4 py-3">
                 <p className={sectionLabel}>Informations complémentaires</p>
-                <p className="text-[14px] text-gray-600 dark:text-slate-200 leading-relaxed">
+                <p className="text-[14px] text-gray-600 dark:text-slate-400 leading-relaxed">
                   {event.infos_complementaires}
                 </p>
               </div>
@@ -203,8 +212,7 @@ function EventDetail() {
               }
               className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50 transition-shadow"
             >
-              {/* En-tête */}
-              <div className="px-4 pt-4 pb-3 border-b border-gray-100 dark:border-slate-700">
+              <div className="px-4 py-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
@@ -215,90 +223,24 @@ function EventDetail() {
                       {org.ville ? " · " + org.ville : ""}
                       {org.region ? " · " + org.region : ""}
                     </p>
+                    {org.description && (
+                      <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed mt-2 line-clamp-2">
+                        {org.description}
+                      </p>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span
-                      className={
-                        "text-[10px] font-medium px-2 py-0.5 rounded-full " +
-                        (BADGE_STATUT[org.statut] || "")
-                      }
-                    >
-                      {org.statut}
-                    </span>
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="text-slate-300 dark:text-slate-600"
-                    >
-                      <path d="M9 18l6-6-6-6" />
-                    </svg>
-                  </div>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="text-slate-300 dark:text-slate-600 shrink-0 mt-0.5"
+                  >
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
                 </div>
-                {org.description && (
-                  <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed mt-2 line-clamp-2">
-                    {org.description}
-                  </p>
-                )}
-              </div>
-
-              {/* Contacts */}
-              <div className="px-4 py-3 flex flex-col gap-2">
-                {org.mail && (
-                  <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                    <span>✉️</span>
-                    <span className="truncate">{org.mail}</span>
-                  </div>
-                )}
-                {org.tel && (
-                  <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                    <span>📞</span>
-                    <span>{org.tel}</span>
-                  </div>
-                )}
-                {org.lien && (
-                  <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                    <span>🔗</span>
-                    <span className="truncate">{org.lien}</span>
-                  </div>
-                )}
-                {org.instagram && (
-                  <div className="flex items-center gap-2.5 text-sm text-teal-600 dark:text-teal-400">
-                    <span>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <rect x="2" y="2" width="20" height="20" rx="5" />
-                        <circle cx="12" cy="12" r="4" />
-                        <circle
-                          cx="17.5"
-                          cy="6.5"
-                          r="0.5"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </span>
-                    <span>{org.instagram}</span>
-                  </div>
-                )}
-                {(org.adresse || org.code_postal || org.ville) && (
-                  <div className="flex items-start gap-2.5 text-xs text-slate-400 dark:text-slate-500">
-                    <span>📍</span>
-                    <span>
-                      {[org.adresse, org.code_postal, org.ville]
-                        .filter(Boolean)
-                        .join(", ")}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
           </div>
