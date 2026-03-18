@@ -121,7 +121,7 @@ function Home() {
           />
         )}
         {!loading && !fetchError && (
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-6">
             {events.map((event, index) => (
               <div key={event.id} className="relative">
                 <EventCard

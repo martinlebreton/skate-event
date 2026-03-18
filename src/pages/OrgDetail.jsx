@@ -12,6 +12,8 @@ import {
   bodyText,
   smallText,
 } from "../components/ui/typography";
+import PageHeader from "../components/ui/PageHeader";
+import { ShareButton, FavoriteButton } from "../components/ui/ActionButtons";
 
 function OrgDetail() {
   const { id } = useParams();
@@ -61,25 +63,32 @@ function OrgDetail() {
   return (
     <div className={"min-h-screen " + bg.page}>
       <div className="sticky top-0 z-40">
-        <header
-          className={
-            "border-b border-gray-200 dark:border-slate-700 px-4 py-3 flex items-center gap-3 " +
-            bg.surface
+        <PageHeader
+          back={
+            <button onClick={() => navigate(-1)} className={backButton}>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
           }
-        >
-          <button onClick={() => navigate(-1)} className={backButton}>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-        </header>
+          actions={
+            <>
+              <ShareButton
+                title={org.nom}
+                text={org.nom + " — " + org.type_org}
+                url={window.location.origin + "/organisateurs/" + org.id}
+              />
+              <FavoriteButton />
+            </>
+          }
+        />
       </div>
 
       <div className="px-3 pt-3 pb-28 flex flex-col gap-4 min-h-screen">

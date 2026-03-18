@@ -9,6 +9,8 @@ import {
   sectionText,
   backButton,
 } from "../components/ui/typography";
+import PageHeader from "../components/ui/PageHeader";
+import { ShareButton, FavoriteButton } from "../components/ui/ActionButtons";
 
 function EventDetail() {
   const { id } = useParams();
@@ -61,20 +63,39 @@ function EventDetail() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header retour */}
-      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className={backButton}>
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-      </header>
+      <div className="sticky top-0 z-40">
+        <PageHeader
+          back={
+            <button onClick={() => navigate(-1)} className={backButton}>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+          }
+          actions={
+            <>
+              <ShareButton
+                title={event.title}
+                text={
+                  event.title +
+                  " — " +
+                  event.location +
+                  (event.ville ? ", " + event.ville : "")
+                }
+                url={window.location.origin + "/events/" + event.id}
+              />
+              <FavoriteButton />
+            </>
+          }
+        />
+      </div>
 
       <div className="px-3 pt-3 pb-28 flex flex-col gap-3 min-h-screen">
         {/* Image 4:5 */}

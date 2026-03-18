@@ -12,24 +12,26 @@ function TitleBlock({ title, accent, subtitle }) {
   );
 }
 
-function PageHeader({ title, accent, subtitle, left, right }) {
+function PageHeader({ title, accent, subtitle, left, right, back, actions }) {
   return (
-    <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4">
-      <div className="flex items-center justify-between">
-        {left ? (
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            {left}
+    <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-4 pb-4">
+      <div className="flex items-center gap-3">
+        {/* Gauche — retour ou logo */}
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          {back && <div className="shrink-0">{back}</div>}
+          {left && !back && <div className="shrink-0">{left}</div>}
+          {(title || subtitle) && (
             <div className="min-w-0">
               <TitleBlock title={title} accent={accent} subtitle={subtitle} />
             </div>
-          </div>
-        ) : (
-          <div className="flex-1 min-w-0">
-            <TitleBlock title={title} accent={accent} subtitle={subtitle} />
-          </div>
-        )}
+          )}
+        </div>
 
-        {right && <div className="shrink-0 ml-3">{right}</div>}
+        {/* Droite — dark mode, admin, actions */}
+        <div className="flex items-center gap-2 shrink-0">
+          {right && right}
+          {actions && actions}
+        </div>
       </div>
     </header>
   );
