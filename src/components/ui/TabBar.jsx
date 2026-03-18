@@ -10,12 +10,12 @@ function TabBar() {
       path: "/",
       icon: (active) => (
         <svg
-          width="18"
-          height="18"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           strokeWidth="2"
-          stroke={active ? "#0d9488" : "#94a3b8"}
+          stroke={active ? "#fff" : "rgba(255,255,255,0.45)"}
         >
           <rect x="3" y="3" width="7" height="7" rx="1" />
           <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -29,12 +29,12 @@ function TabBar() {
       path: "/contact",
       icon: (active) => (
         <svg
-          width="18"
-          height="18"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           strokeWidth="2"
-          stroke={active ? "#0d9488" : "#94a3b8"}
+          stroke={active ? "#fff" : "rgba(255,255,255,0.45)"}
         >
           <circle cx="12" cy="12" r="9" />
           <path d="M12 8v8M8 12h8" strokeLinecap="round" />
@@ -46,12 +46,12 @@ function TabBar() {
       path: "/organisateurs",
       icon: (active) => (
         <svg
-          width="18"
-          height="18"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           strokeWidth="2"
-          stroke={active ? "#0d9488" : "#94a3b8"}
+          stroke={active ? "#fff" : "rgba(255,255,255,0.45)"}
         >
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
           <circle cx="9" cy="7" r="4" />
@@ -66,8 +66,11 @@ function TabBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-center"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="fixed bottom-0 left-0 right-0 z-50 flex items-stretch"
+      style={{
+        background: "#0f766e",
+        paddingBottom: "env(safe-area-inset-bottom)",
+      }}
     >
       {tabs.map((tab) => {
         const isActive = location.pathname === tab.path;
@@ -75,16 +78,18 @@ function TabBar() {
           <button
             key={tab.path}
             onClick={() => navigate(tab.path)}
-            className="flex-1 flex flex-col items-center gap-1 py-2.5 bg-transparent border-none cursor-pointer"
+            className="flex-1 flex flex-col items-center justify-center gap-1 py-2.5 border-none cursor-pointer"
+            style={{ background: "transparent" }}
           >
             {tab.icon(isActive)}
             <span
-              className={
-                "text-[10px] font-medium tracking-wide " +
-                (isActive
-                  ? "text-teal-600 dark:text-teal-400"
-                  : "text-slate-400 dark:text-slate-600")
-              }
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: "0.3px",
+                color: isActive ? "#fff" : "rgba(255,255,255,0.45)",
+                fontFamily: "Inter, sans-serif",
+              }}
             >
               {tab.label}
             </span>
