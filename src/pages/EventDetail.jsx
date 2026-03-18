@@ -210,9 +210,7 @@ function EventDetail() {
           <div>
             <p className={sectionLabel + " px-1 mb-2"}>Organisé par</p>
             <div
-              onClick={() =>
-                navigate("/organisateurs", { state: { selectedOrgId: org.id } })
-              }
+              onClick={() => navigate("/organisateurs/" + org.id)}
               className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50 transition-shadow"
             >
               <div className="px-4 py-4">
