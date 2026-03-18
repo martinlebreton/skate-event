@@ -7,6 +7,12 @@ import EventCard from "../components/cards/EventCard";
 import Badge from "../components/ui/Badge";
 import EmptyState from "../components/ui/EmptyState";
 import { useEnums } from "../hooks/useEnums";
+import {
+  sectionLabel,
+  sectionValue,
+  sectionText,
+  backButton,
+} from "../components/ui/typography";
 
 // ── Vue détail organisateur ───────────────────────────────
 function OrgDetail({ org, onBack }) {
@@ -26,16 +32,19 @@ function OrgDetail({ org, onBack }) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3.5 flex items-center gap-3">
-        <button
-          onClick={handleBack}
-          className="text-[13px] font-medium text-teal-600 dark:text-teal-400 bg-transparent border-none cursor-pointer p-0"
-        >
-          ← Retour
+      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3 flex items-center gap-3">
+        <button onClick={handleBack} className={backButton}>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </button>
-        <span className="text-[13px] text-slate-400 dark:text-slate-600 truncate">
-          {org.nom}
-        </span>
       </header>
 
       <div className="px-3 pt-3 pb-28 flex flex-col gap-4 bg-hatch min-h-screen">
