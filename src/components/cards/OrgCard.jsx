@@ -17,17 +17,17 @@ function OrgCard({ org, onClick, actions }) {
       <div className="p-4">
         <div className="flex items-start justify-between gap-2 mb-1">
           <div className="flex-1 min-w-0">
+            <div className="mb-2">
+              <Badge type="typeOrg" value={org.type_org} size="sm" />
+            </div>
             <p className={subheading + " truncate"}>{org.nom}</p>
+
             <p className={"text-xs " + text.muted + " mt-0.5"}>
               {org.ville ? org.ville : ""}
               {org.region ? (org.ville ? " · " : "") + org.region : ""}
             </p>
           </div>
           <Badge type="statut" value={org.statut} size="sm" />
-        </div>
-
-        <div className="mt-2">
-          <Badge type="typeOrg" value={org.type_org} size="sm" />
         </div>
 
         {org.description && (

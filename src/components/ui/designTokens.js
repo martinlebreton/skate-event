@@ -1,8 +1,8 @@
 export const text = {
   title: "text-gray-950 dark:text-slate-100",
-  body: "text-gray-600 dark:text-slate-400",
-  muted: "text-slate-400 dark:text-slate-500",
-  hint: "text-slate-300 dark:text-slate-600",
+  body: "text-gray-800 dark:text-slate-400",
+  muted: "text-slate-400 dark:text-slate-400",
+  hint: "text-slate-300 dark:text-slate-500",
   primary: "text-teal-600 dark:text-teal-400",
   danger: "text-red-500 dark:text-red-400",
 };
