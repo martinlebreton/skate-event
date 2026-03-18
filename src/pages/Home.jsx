@@ -6,6 +6,7 @@ import { useTheme } from "../context/ThemeContext";
 import EventCard from "../components/cards/EventCard";
 import Filters from "../components/ui/Filters";
 import EmptyState from "../components/ui/EmptyState";
+import PageHeader from "../components/ui/PageHeader";
 
 function Home() {
   const [events, setEvents] = useState([]);
@@ -48,26 +49,18 @@ function Home() {
       {/* Zone fixe en haut */}
       <div className="sticky top-0 z-40">
         {/* Header */}
-        <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <img
-                src="/logo-skateevent.svg"
-                alt="SkateEvent"
-                className="w-10 h-10 rounded-lg"
-              />
-              <div>
-                <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100 leading-none">
-                  SKATE
-                  <span className="text-teal-600 dark:text-teal-400">
-                    EVENT
-                  </span>
-                </h1>
-                <p className="text-sm text-slate-400 mt-0.5">
-                  Les événements skate en France
-                </p>
-              </div>
-            </div>
+        <PageHeader
+          title="SKATE"
+          accent="EVENT"
+          subtitle="Les événements skate en France"
+          left={
+            <img
+              src="/logo-skateevent.svg"
+              alt="SkateEvent"
+              className="w-10 h-10 rounded-lg shrink-0"
+            />
+          }
+          right={
             <button
               onClick={toggleDark}
               className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
@@ -102,8 +95,8 @@ function Home() {
                 {dark ? "Light" : "Dark"}
               </span>
             </button>
-          </div>
-        </header>
+          }
+        />
 
         {/* Filtres */}
         <Filters

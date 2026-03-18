@@ -62,7 +62,7 @@ function EventDetail() {
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header retour */}
       <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 py-3 flex items-center gap-3">
-        <button onClick={() => navigate("/organisateurs/" + org.id)}>
+        <button onClick={() => navigate(-1)} className={backButton}>
           <svg
             width="18"
             height="18"

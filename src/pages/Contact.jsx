@@ -1,14 +1,13 @@
+import PageHeader from "../components/ui/PageHeader";
+
 function Contact() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4 ">
-        <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100 leading-none">
-          SKATE<span className="text-teal-600 dark:text-teal-400">EVENT</span>
-        </h1>
-        <p className="text-sm text-slate-400 mt-0.5">
-          Les événements skate en France
-        </p>
-      </header>
+      <PageHeader
+        title="SKATE"
+        accent="EVENT"
+        subtitle="Les événements skate en France"
+      />
 
       <main className="px-3 pt-8 pb-28 bg-hatch min-h-screen flex flex-col items-center justify-start">
         <div className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-8 flex flex-col items-center text-center gap-6">

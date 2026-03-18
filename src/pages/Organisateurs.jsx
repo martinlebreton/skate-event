@@ -4,6 +4,7 @@ import { useOrganisateurs } from "../hooks/useOrganisateurs";
 import { useEnums } from "../hooks/useEnums";
 import OrgCard from "../components/cards/OrgCard";
 import EmptyState from "../components/ui/EmptyState";
+import PageHeader from "../components/ui/PageHeader";
 
 function Organisateurs() {
   const { organisateurs, loading, fetchError } = useOrganisateurs();
@@ -19,15 +20,11 @@ function Organisateurs() {
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header sticky */}
       <div className="sticky top-0 z-40">
-        <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-4 pt-5 pb-4">
-          <h1 className="text-xl font-bold tracking-tight uppercase text-gray-950 dark:text-slate-100">
-            ORGA
-            <span className="text-teal-600 dark:text-teal-400">NISATEURS</span>
-          </h1>
-          <p className="text-sm text-slate-400 mt-0.5">
-            Les organisateurs d'événements
-          </p>
-        </header>
+        <PageHeader
+          title="ORGA"
+          accent="NISATEURS"
+          subtitle="Les organisateurs d'événements"
+        />
 
         {/* Filtre région */}
         <div className="flex gap-2 px-3 py-2.5 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
