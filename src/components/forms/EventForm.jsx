@@ -195,7 +195,9 @@ function EventForm({
 
       {/* Tarif */}
       <div>
-        <label className={labelClass}>Tarif</label>
+        <label className={labelClass}>
+          Tarif <span className="text-red-500">*</span>
+        </label>
         <select
           name="event_tarif"
           value={form.event_tarif || ""}
