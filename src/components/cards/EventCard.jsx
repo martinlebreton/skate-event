@@ -120,7 +120,6 @@ function EventCard({ event, onClick, index = 0, actions }) {
             url={window.location.origin + "/events/" + event.id}
             size="sm"
           />
-          <FavoriteButton size="sm" />
         </div>
       </div>
     </div>

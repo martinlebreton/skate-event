@@ -9,14 +9,17 @@ import {
   sectionText,
   backButton,
 } from "../components/ui/typography";
+import { bg, text } from "../components/ui/designTokens";
 import PageHeader from "../components/ui/PageHeader";
-import { ShareButton, FavoriteButton } from "../components/ui/ActionButtons";
+import { ShareButton } from "../components/ui/ActionButtons";
+import Lightbox from "../components/ui/Lightbox";
 
 function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
     fetchEvent();
@@ -35,15 +38,19 @@ function EventDetail() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
-        <p className="text-sm text-slate-400">Chargement...</p>
+      <div
+        className={"flex items-center justify-center min-h-screen " + bg.page}
+      >
+        <p className={"text-sm " + text.muted}>Chargement...</p>
       </div>
     );
 
   if (!event)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
-        <p className="text-sm text-slate-400">Événement introuvable</p>
+      <div
+        className={"flex items-center justify-center min-h-screen " + bg.page}
+      >
+        <p className={"text-sm " + text.muted}>Événement introuvable</p>
       </div>
     );
 
@@ -61,8 +68,17 @@ function EventDetail() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      {/* Header retour */}
+    <div className={"min-h-screen " + bg.page}>
+      {/* Lightbox */}
+      {lightboxOpen && event.image_url && (
+        <Lightbox
+          src={event.image_url}
+          alt={event.title}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+
+      {/* Header sticky */}
       <div className="sticky top-0 z-40">
         <PageHeader
           back={
@@ -80,40 +96,62 @@ function EventDetail() {
             </button>
           }
           actions={
-            <>
-              <ShareButton
-                title={event.title}
-                text={
-                  event.title +
-                  " — " +
-                  event.location +
-                  (event.ville ? ", " + event.ville : "")
-                }
-                url={window.location.origin + "/events/" + event.id}
-              />
-              <FavoriteButton />
-            </>
+            <ShareButton
+              title={event.title}
+              text={
+                event.title +
+                " — " +
+                event.location +
+                (event.ville ? ", " + event.ville : "")
+              }
+              url={window.location.origin + "/events/" + event.id}
+            />
           }
         />
       </div>
 
       <div className="px-3 pt-3 pb-28 flex flex-col gap-3 min-h-screen">
-        {/* Image 4:5 */}
+        {/* Image 16:9 cliquable */}
         {event.image_url ? (
-          <img
-            src={event.image_url}
-            alt={event.title}
-            className="w-full rounded-xl object-cover border border-gray-200 dark:border-slate-700"
-            style={{ aspectRatio: "4/5" }}
-          />
+          <div
+            onClick={() => setLightboxOpen(true)}
+            className="relative cursor-zoom-in overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700"
+            style={{ aspectRatio: "16/9" }}
+          >
+            <img
+              src={event.image_url}
+              alt={event.title}
+              className="w-full h-full object-cover"
+            />
+            {/* Indicateur zoom */}
+            <div className="absolute bottom-2 right-2 bg-black/40 rounded-lg px-2 py-1 flex items-center gap-1">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35M11 8v6M8 11h6" />
+              </svg>
+              <span className="text-white text-[10px] font-medium">
+                Agrandir
+              </span>
+            </div>
+          </div>
         ) : (
           <div
-            className="w-full rounded-xl bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 flex items-center justify-center"
-            style={{ aspectRatio: "4/5" }}
+            className={
+              "w-full rounded-xl flex items-center justify-center border border-gray-200 dark:border-slate-700 " +
+              bg.subtle
+            }
+            style={{ aspectRatio: "16/9" }}
           >
             <svg
-              width="40"
-              height="40"
+              width="32"
+              height="32"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -156,7 +194,13 @@ function EventDetail() {
         </div>
 
         {/* Bloc infos */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+        <div
+          className={
+            "rounded-xl overflow-hidden " +
+            bg.surface +
+            " border border-gray-200 dark:border-slate-700"
+          }
+        >
           <div className="px-4 py-3">
             <p className={sectionLabel}>Date</p>
             <p
@@ -176,12 +220,7 @@ function EventDetail() {
               {event.location}
               {event.ville ? ", " + event.ville : ""}
             </p>
-          </div>
 
-          <Divider />
-
-          <div className="px-4 py-3">
-            <p className={sectionLabel}>Région</p>
             <p className={sectionValue}>{event.region}</p>
           </div>
 
@@ -204,7 +243,12 @@ function EventDetail() {
                   {infosPratiques.map(({ key, label, icon }) => (
                     <span
                       key={key}
-                      className="inline-flex items-center gap-1.5 text-sm bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 px-3 py-1.5 rounded-full font-medium"
+                      className={
+                        "inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full font-medium " +
+                        bg.subtle +
+                        " " +
+                        text.body
+                      }
                     >
                       <span>{icon}</span>
                       {label}
@@ -227,27 +271,37 @@ function EventDetail() {
         </div>
 
         {/* Organisateur */}
-        {/* Espace entre infos et organisateur */}
         {org && (
           <div className="mt-4">
             <p className={sectionLabel + " px-1 mb-2"}>Organisé par</p>
             <div
               onClick={() => navigate("/organisateurs/" + org.id)}
-              className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50 transition-shadow"
+              className={
+                "rounded-xl overflow-hidden cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50 transition-shadow " +
+                bg.surface +
+                " border border-gray-200 dark:border-slate-700"
+              }
             >
               <div className="px-4 py-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
+                    <p
+                      className={"font-semibold text-sm truncate " + text.title}
+                    >
                       {org.nom}
                     </p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                    <p className={"text-xs mt-0.5 " + text.muted}>
                       {org.type_org}
                       {org.ville ? " · " + org.ville : ""}
                       {org.region ? " · " + org.region : ""}
                     </p>
                     {org.description && (
-                      <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed mt-2 line-clamp-2">
+                      <p
+                        className={
+                          "text-xs leading-relaxed mt-2 line-clamp-2 " +
+                          text.muted
+                        }
+                      >
                         {org.description}
                       </p>
                     )}
@@ -259,7 +313,7 @@ function EventDetail() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className="text-slate-300 dark:text-slate-600 shrink-0 mt-0.5"
+                    className={"shrink-0 mt-0.5 " + text.hint}
                   >
                     <path d="M9 18l6-6-6-6" />
                   </svg>
@@ -273,7 +327,10 @@ function EventDetail() {
         <div className="mt-6 pb-4 flex flex-col items-center gap-2">
           <button
             onClick={() => navigate("/contact")}
-            className="flex items-center gap-2 text-slate-400 dark:text-slate-600 hover:text-red-400 dark:hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer"
+            className={
+              "flex items-center gap-2 hover:text-red-400 dark:hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer " +
+              text.muted
+            }
           >
             <svg
               width="14"

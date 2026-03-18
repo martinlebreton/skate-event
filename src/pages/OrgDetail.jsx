@@ -79,14 +79,11 @@ function OrgDetail() {
             </button>
           }
           actions={
-            <>
-              <ShareButton
-                title={org.nom}
-                text={org.nom + " — " + org.type_org}
-                url={window.location.origin + "/organisateurs/" + org.id}
-              />
-              <FavoriteButton />
-            </>
+            <ShareButton
+              title={org.nom}
+              text={org.nom + " — " + org.type_org}
+              url={window.location.origin + "/organisateurs/" + org.id}
+            />
           }
         />
       </div>
