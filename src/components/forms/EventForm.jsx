@@ -103,7 +103,7 @@ function EventForm({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex flex-col gap-3">
         <div>
           <label className={labelClass}>
             Début <span className="text-red-500">*</span>

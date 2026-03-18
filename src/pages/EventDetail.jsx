@@ -227,8 +227,9 @@ function EventDetail() {
         </div>
 
         {/* Organisateur */}
+        {/* Espace entre infos et organisateur */}
         {org && (
-          <div>
+          <div className="mt-4">
             <p className={sectionLabel + " px-1 mb-2"}>Organisé par</p>
             <div
               onClick={() => navigate("/organisateurs/" + org.id)}
@@ -267,6 +268,27 @@ function EventDetail() {
             </div>
           </div>
         )}
+
+        {/* Signalement */}
+        <div className="mt-6 pb-4 flex flex-col items-center gap-2">
+          <button
+            onClick={() => navigate("/contact")}
+            className="flex items-center gap-2 text-slate-400 dark:text-slate-600 hover:text-red-400 dark:hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+              <line x1="4" y1="22" x2="4" y2="15" />
+            </svg>
+            <span className="text-xs">Signaler cet événement</span>
+          </button>
+        </div>
       </div>
     </div>
   );
