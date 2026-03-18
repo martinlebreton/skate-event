@@ -18,29 +18,41 @@ function EventCard({ event, onClick, index = 0, actions }) {
     >
       {/* Contenu gauche */}
       <div className="flex-1 min-w-0 p-4 flex flex-col justify-between gap-2">
-        <div>
-          <Badge type="eventType" value={event.type} size="md" />
+        <div className="flex flex-col gap-2">
+          {/* Badge */}
+          <div className="self-start">
+            <Badge type="eventType" value={event.type} size="md" />
+          </div>
 
-          <h2 className="text-[15px] font-bold tracking-tight text-gray-950 dark:text-slate-100 leading-snug text-balance mt-2 mb-2">
+          {/* Titre */}
+          <h2 className="text-[16px] font-bold tracking-tight text-gray-950 dark:text-slate-100 leading-snug text-balance">
             {event.title}
           </h2>
 
-          <div className="text-[12px] text-gray-500 dark:text-slate-400 leading-relaxed">
-            <span className="font-medium text-gray-700 dark:text-slate-300">
+          {/* Date + heure */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[13px] font-semibold text-gray-800 dark:text-slate-200">
               {formattedDate}
             </span>
-            {" · "}
-            {formattedTime}
-            <br />
+            <span className="text-slate-300 dark:text-slate-600 text-[13px]">
+              ·
+            </span>
+            <span className="text-[13px] text-slate-500 dark:text-slate-400">
+              {formattedTime}
+            </span>
+          </div>
+
+          {/* Lieu */}
+          <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-snug">
             {event.location}
             {event.ville ? " · " + event.ville : ""}
-          </div>
+          </p>
 
           {/* Organisé par */}
           {event.organisateurs?.nom && (
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">
-              Organisé par
-              <span className="font-medium text-teal-600 dark:text-teal-400 ml-1">
+            <p className="text-[12px] text-slate-400 dark:text-slate-500">
+              Organisé par{" "}
+              <span className="font-medium text-teal-600 dark:text-teal-400">
                 {event.organisateurs.nom}
               </span>
             </p>
