@@ -13,7 +13,7 @@ import {
   smallText,
 } from "../components/ui/typography";
 import PageHeader from "../components/ui/PageHeader";
-import { ShareButton, FavoriteButton } from "../components/ui/ActionButtons";
+import { ShareButton } from "../components/ui/ActionButtons";
 
 function OrgDetail() {
   const { id } = useParams();

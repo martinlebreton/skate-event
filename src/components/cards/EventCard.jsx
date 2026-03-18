@@ -2,7 +2,7 @@ import Badge from "../ui/Badge";
 import { formatDateCourte, formatHeure } from "../../utils/dates";
 import { text, bg, card } from "../ui/designTokens";
 import { cardTitle } from "../ui/typography";
-import { ShareButton, FavoriteButton } from "../ui/ActionButtons";
+import { ShareButton } from "../ui/ActionButtons";
 
 function EventCard({ event, onClick, index = 0, actions }) {
   const formattedDate = formatDateCourte(event.date);
