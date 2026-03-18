@@ -49,12 +49,17 @@ function Contact() {
               Contact
             </p>
             <p className={"text-sm font-semibold " + text.primary}>
-              contact.skateevent@gmail.com
+              <a
+                href={"mailto:contact.skateevent@gmail.com"}
+                className="hover:underline"
+              >
+                contact.skateevent@gmail.com
+              </a>
             </p>
           </div>
 
           <p className={"text-xs leading-relaxed " + text.muted}>
-            Nous vous répondrons dès que possible, là on skate 🛹
+            Nous vous répondrons dès la fin de session 🛹
           </p>
         </div>
 
@@ -66,7 +71,7 @@ function Contact() {
           }
         >
           <p className={"text-xs leading-relaxed text-center " + text.muted}>
-            SkateEvent est développée bénévolement par pur plaisir du skate !
+            SkateEvent est développée par pur plaisir du skate !
           </p>
           <div className="border-t border-gray-100 dark:border-slate-700 my-4" />
           <p className={"text-xs leading-relaxed text-center " + text.muted}>
