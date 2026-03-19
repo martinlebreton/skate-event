@@ -163,7 +163,14 @@ function Home() {
         {/* Bannière bienvenue */}
         <Banner
           bg="bg-slate-200 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
-          icon={<img src="/icon-skate.svg" alt="Skate" className="" />}
+          icon={
+            <img
+              src="/icon-skate-2026.svg"
+              fill="currentColor"
+              alt="Skate"
+              className=""
+            />
+          }
           title="Bienvenue sur SkateEvent"
           text="Retrouve les prochains contests et événements skate en France."
           className="mb-1"

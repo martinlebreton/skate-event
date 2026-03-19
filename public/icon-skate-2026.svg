@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 64 64">
+  <!-- Generator: Adobe Illustrator 30.2.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 1)  -->
+  <defs>
+    <style>
+      .st0 {
+        stroke-width: 1.1px;
+      }
+
+      .st0, .st1, .st2, .st3 {
+        fill: none;
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-miterlimit: 10;
+      }
+
+      .st1 {
+        stroke-width: 1.2px;
+      }
+
+      .st2 {
+        stroke-width: 1.5px;
+      }
+
+      .st3 {
+        stroke-width: 1.6px;
+      }
+    </style>
+  </defs>
+  <rect class="st2" x="14.6" y="-2.3" width="17.7" height="51" rx="8.8" ry="8.8" transform="translate(23.3 -9.8) rotate(45)"/>
+  <circle class="st0" cx="32.4" cy="12" r=".5"/>
+  <circle class="st0" cx="35" cy="14.7" r=".5"/>
+  <circle class="st0" cx="29.7" cy="14.7" r=".5"/>
+  <circle class="st0" cx="32.3" cy="17.4" r=".5"/>
+  <circle class="st0" cx="14.1" cy="30.3" r=".5"/>
+  <circle class="st0" cx="16.7" cy="33" r=".5"/>
+  <circle class="st0" cx="11.4" cy="33" r=".5"/>
+  <circle class="st0" cx="14" cy="35.7" r=".5"/>
+  <rect class="st2" x="32.1" y="15.2" width="17.7" height="51" rx="8.8" ry="8.8" transform="translate(40.8 -17) rotate(45)"/>
+  <rect class="st2" x="44.8" y="25" width="3.7" height="5.5" rx=".9" ry=".9" transform="translate(33.3 -24.8) rotate(45)"/>
+  <rect class="st2" x="52.1" y="32.3" width="3.7" height="5.5" rx=".9" ry=".9" transform="translate(40.6 -27.9) rotate(45)"/>
+  <rect class="st1" x="46.9" y="31" width="6.7" height=".8" transform="translate(36.9 -26.4) rotate(45)"/>
+  <circle class="st3" cx="49" cy="32.7" r="1"/>
+  <rect class="st2" x="32.9" y="51.6" width="3.7" height="5.5" rx=".9" ry=".9" transform="translate(20.9 117.3) rotate(-135)"/>
+  <rect class="st2" x="25.5" y="44.2" width="3.7" height="5.5" rx=".9" ry=".9" transform="translate(13.5 99.5) rotate(-135)"/>
+  <rect class="st1" x="27.7" y="50.2" width="6.7" height=".8" transform="translate(17.2 108.4) rotate(-135)"/>
+  <circle class="st3" cx="32.4" cy="49.3" r="1"/>
+</svg>
