@@ -5,7 +5,9 @@ import { ThemeProvider } from "./context/ThemeContext";
 import App from "./App.jsx";
 import "./index.css";
 
-createRoot(document.getElementById("root")).render(
+const root = createRoot(document.getElementById("root"));
+
+root.render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
@@ -14,3 +16,11 @@ createRoot(document.getElementById("root")).render(
     </ThemeProvider>
   </StrictMode>,
 );
+
+// Masque le splash une fois React rendu
+// requestAnimationFrame garantit que le DOM est peint
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    window.hideSplash?.();
+  });
+});
