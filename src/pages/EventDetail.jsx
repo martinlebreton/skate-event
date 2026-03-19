@@ -12,6 +12,7 @@ import {
 import { bg, text } from "../components/ui/designTokens";
 import PageHeader from "../components/ui/PageHeader";
 import { ShareButton } from "../components/ui/ActionButtons";
+import OrgCard from "../components/cards/OrgCard";
 import Lightbox from "../components/ui/Lightbox";
 
 function EventDetail() {
@@ -272,55 +273,14 @@ function EventDetail() {
         </div>
 
         {/* Organisateur */}
+        {/* Organisateur */}
         {org && (
           <div className="mt-4">
             <p className={sectionLabel + " px-1 mb-2"}>Organisé par</p>
-            <div
+            <OrgCard
+              org={org}
               onClick={() => navigate("/organisateurs/" + org.id)}
-              className={
-                "rounded-xl overflow-hidden cursor-pointer hover:shadow-md dark:hover:shadow-slate-900/50 transition-shadow " +
-                bg.surface +
-                " border border-gray-200 dark:border-slate-700"
-              }
-            >
-              <div className="px-4 py-4">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p
-                      className={"font-semibold text-sm truncate " + text.title}
-                    >
-                      {org.nom}
-                    </p>
-                    <p className={"text-xs mt-0.5 " + text.muted}>
-                      {org.type_org}
-                      {org.ville ? " · " + org.ville : ""}
-                      {org.region ? " · " + org.region : ""}
-                    </p>
-                    {org.description && (
-                      <p
-                        className={
-                          "text-xs leading-relaxed mt-2 line-clamp-2 " +
-                          text.muted
-                        }
-                      >
-                        {org.description}
-                      </p>
-                    )}
-                  </div>
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className={"shrink-0 mt-0.5 " + text.hint}
-                  >
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+            />
           </div>
         )}
 
