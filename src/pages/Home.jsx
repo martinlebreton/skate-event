@@ -8,6 +8,7 @@ import Filters from "../components/ui/Filters";
 import EmptyState from "../components/ui/EmptyState";
 import PageHeader from "../components/ui/PageHeader";
 import { bg } from "../components/ui/designTokens";
+import Banner from "../components/ui/Banner";
 
 const PAGE_SIZE = 10;
 
@@ -159,6 +160,15 @@ function Home() {
       </div>
 
       <main className="px-3 pt-3 pb-28 min-h-screen">
+        {/* Bannière bienvenue */}
+        <Banner
+          bg="bg-slate-200 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
+          icon={<img src="/icon-skate.svg" alt="Skate" className="" />}
+          title="Bienvenue sur SkateEvent"
+          text="Retrouve les prochains contests et événements skate en France."
+          className="mb-1"
+        />
+
         {/* Chargement initial */}
         {loading && (
           <p className="text-center text-sm text-slate-400 dark:text-slate-600 mt-16">
