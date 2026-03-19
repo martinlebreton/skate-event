@@ -214,15 +214,6 @@ function Admin() {
                       event={event}
                       actions={
                         <div className="flex flex-col gap-2">
-                          {/* Organisateur */}
-                          {event.organisateurs && (
-                            <p className="text-xs text-slate-400 dark:text-slate-500">
-                              Organisé par
-                              <span className="font-medium text-teal-600 dark:text-teal-400 ml-1">
-                                {event.organisateurs.nom}
-                              </span>
-                            </p>
-                          )}
                           {/* Boutons */}
                           <div className="flex gap-2">
                             <button
