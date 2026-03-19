@@ -121,6 +121,7 @@ function EventDetail() {
             <img
               src={event.image_url}
               alt={event.title}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
             {/* Indicateur zoom */}

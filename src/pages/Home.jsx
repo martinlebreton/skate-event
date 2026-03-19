@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../context/AuthContext";
@@ -9,36 +9,88 @@ import EmptyState from "../components/ui/EmptyState";
 import PageHeader from "../components/ui/PageHeader";
 import { bg } from "../components/ui/designTokens";
 
+const PAGE_SIZE = 10;
+
 function Home() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [fetchError, setFetchError] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
   const { user } = useAuth();
   const { dark, toggleDark } = useTheme();
 
+  // Ref sur le sentinel — élément invisible en bas de liste
+  const sentinelRef = useRef(null);
+
+  // Reset quand les filtres changent
   useEffect(() => {
-    fetchEvents();
+    setEvents([]);
+    setPage(0);
+    setHasMore(true);
+    fetchEvents(0, true);
   }, [selectedRegion, selectedType]);
 
-  async function fetchEvents() {
-    setLoading(true);
+  async function fetchEvents(pageIndex = 0, reset = false) {
+    if (pageIndex === 0) setLoading(true);
+    else setLoadingMore(true);
     setFetchError(null);
+
+    const from = pageIndex * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
     let query = supabase
       .from("events")
       .select("*, organisateurs(nom)")
       .gte("date", new Date().toISOString())
       .order("date", { ascending: true })
-      .limit(10);
+      .range(from, to);
+
     if (selectedRegion) query = query.eq("region", selectedRegion);
     if (selectedType) query = query.eq("type", selectedType);
+
     const { data, error } = await query;
-    if (error) setFetchError(error.message);
-    else setEvents(data);
+
+    if (error) {
+      setFetchError(error.message);
+    } else {
+      // Si on reçoit moins que PAGE_SIZE → plus rien à charger
+      setHasMore(data.length === PAGE_SIZE);
+      setEvents((prev) => (reset ? data : [...prev, ...data]));
+    }
+
     setLoading(false);
+    setLoadingMore(false);
   }
+
+  // Charge la page suivante
+  const loadMore = useCallback(() => {
+    if (!loadingMore && !loading && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchEvents(nextPage);
+    }
+  }, [loadingMore, loading, hasMore, page]);
+
+  // IntersectionObserver — surveille le sentinel
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   function handleEdit(e, event) {
     e.stopPropagation();
@@ -101,18 +153,23 @@ function Home() {
         <Filters
           selectedRegion={selectedRegion}
           selectedType={selectedType}
-          onRegionChange={setSelectedRegion}
-          onTypeChange={setSelectedType}
+          onRegionChange={(v) => setSelectedRegion(v)}
+          onTypeChange={(v) => setSelectedType(v)}
         />
       </div>
 
       <main className="px-3 pt-3 pb-28 min-h-screen">
+        {/* Chargement initial */}
         {loading && (
           <p className="text-center text-sm text-slate-400 dark:text-slate-600 mt-16">
             Chargement...
           </p>
         )}
+
+        {/* Erreur */}
         {!loading && fetchError && <EmptyState error={fetchError} />}
+
+        {/* Aucun résultat */}
         {!loading && !fetchError && events.length === 0 && (
           <EmptyState
             icon="🛹"
@@ -120,8 +177,10 @@ function Home() {
             subtitle="Essaie d'autres filtres"
           />
         )}
+
+        {/* Liste */}
         {!loading && !fetchError && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             {events.map((event, index) => (
               <div key={event.id} className="relative">
                 <EventCard
@@ -139,6 +198,27 @@ function Home() {
                 )}
               </div>
             ))}
+
+            {/* Sentinel — élément invisible qui déclenche le chargement */}
+            {hasMore && (
+              <div
+                ref={sentinelRef}
+                className="h-8 flex items-center justify-center"
+              >
+                {loadingMore && (
+                  <p className="text-sm text-slate-400 dark:text-slate-600">
+                    Chargement...
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Fin de liste */}
+            {!hasMore && events.length > 0 && (
+              <p className="text-center text-xs text-slate-300 dark:text-slate-700 py-4">
+                — Tous les événements sont affichés —
+              </p>
+            )}
           </div>
         )}
       </main>

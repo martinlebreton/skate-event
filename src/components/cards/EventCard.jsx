@@ -46,6 +46,7 @@ function EventCard({ event, onClick, index = 0, actions }) {
         <img
           src={event.image_url}
           alt={event.title}
+          loading="lazy"
           className="w-full object-cover"
           style={{ aspectRatio: "16/9" }}
         />
