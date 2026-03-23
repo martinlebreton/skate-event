@@ -27,15 +27,18 @@ export function useOrganisateurs() {
     setLoading(false);
   }
 
+  // Nettoie le form avant envoi — retire les champs auto-gérés par Supabase
+  function cleanForm(form) {
+    const { org_id, id, created_at, ...clean } = form;
+    return {
+      ...clean,
+      region: clean.region || null,
+    };
+  }
+
   async function createOrganisateur(form) {
     const { error, message } = await supabaseQuery(
-      () =>
-        supabase.from("organisateurs").insert([
-          {
-            ...form,
-            region: form.region || null,
-          },
-        ]),
+      () => supabase.from("organisateurs").insert([cleanForm(form)]),
       "createOrganisateur",
     );
     if (!error) await fetchOrganisateurs();
@@ -44,14 +47,7 @@ export function useOrganisateurs() {
 
   async function updateOrganisateur(id, form) {
     const { error, message } = await supabaseQuery(
-      () =>
-        supabase
-          .from("organisateurs")
-          .update({
-            ...form,
-            region: form.region || null,
-          })
-          .eq("id", id),
+      () => supabase.from("organisateurs").update(cleanForm(form)).eq("id", id),
       "updateOrganisateur",
     );
     if (!error) await fetchOrganisateurs();

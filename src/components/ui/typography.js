@@ -5,7 +5,7 @@ export const pageTitle =
 export const heading = "text-lg font-bold tracking-tight " + text.title;
 export const subheading = "text-[15px] font-semibold " + text.title;
 export const cardTitle =
-  "text-[16px] font-bold tracking-tight " +
+  "text-[24px] font-bold tracking-tight " +
   text.title +
   " leading-snug text-balance";
 export const bodyText = "text-[15px] " + text.body + " leading-relaxed";

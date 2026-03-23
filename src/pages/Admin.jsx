@@ -351,6 +351,19 @@ function Admin() {
                 >
                   ← Retour à la liste
                 </button>
+
+                {/* Affichage org_id — lecture seule */}
+                {selected.org_id && (
+                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 px-4 py-3 mb-4 flex items-center justify-between">
+                    <span className="text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                      ID Organisateur
+                    </span>
+                    <span className="text-sm font-mono font-semibold text-teal-600 dark:text-teal-400">
+                      #{selected.org_id}
+                    </span>
+                  </div>
+                )}
+
                 <OrganisateurForm
                   initial={selected}
                   onSubmit={(form) => updateOrganisateur(selected.id, form)}
