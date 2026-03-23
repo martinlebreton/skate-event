@@ -16,6 +16,15 @@ import Lightbox from "../components/ui/Lightbox";
 import Divider from "../components/ui/Divider";
 import LoadingState from "../components/ui/LoadingState";
 import OrgCard from "../components/cards/OrgCard";
+import {
+  BarIcon,
+  RestaurationIcon,
+  ParkingIcon,
+  SanitaireIcon,
+  SignalIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "../components/ui/icons";
 
 function EventDetail() {
   const { id } = useParams();
@@ -45,10 +54,14 @@ function EventDetail() {
   const org = event.organisateurs;
 
   const infosPratiques = [
-    { key: "infos_bar", label: "Bar", icon: "🍺" },
-    { key: "infos_restauration", label: "Restauration", icon: "🍔" },
-    { key: "infos_parking", label: "Parking", icon: "🅿️" },
-    { key: "infos_sanitaire", label: "Sanitaires", icon: "🚻" },
+    { key: "infos_bar", label: "Bar", icon: <BarIcon /> },
+    {
+      key: "infos_restauration",
+      label: "Restauration",
+      icon: <RestaurationIcon />,
+    },
+    { key: "infos_parking", label: "Parking", icon: <ParkingIcon /> },
+    { key: "infos_sanitaire", label: "Sanitaires", icon: <SanitaireIcon /> },
   ].filter(({ key }) => !!event[key]);
 
   return (
@@ -67,16 +80,7 @@ function EventDetail() {
         <PageHeader
           back={
             <button onClick={() => navigate(-1)} className={backButton}>
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
+              <ChevronLeftIcon size={18} />
             </button>
           }
           actions={
@@ -172,7 +176,7 @@ function EventDetail() {
               </span>
             )}
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-balance text-gray-950 dark:text-slate-100 leading-tight">
+          <h1 className="text-4xl font-bold tracking-tight text-balance text-gray-950 dark:text-slate-100 leading-tight">
             {event.title}
           </h1>
         </div>
@@ -233,7 +237,9 @@ function EventDetail() {
                         text.body
                       }
                     >
-                      <span>{icon}</span>
+                      <span className="text-teal-600 dark:text-teal-400">
+                        {icon}
+                      </span>
                       {label}
                     </span>
                   ))}
@@ -273,17 +279,7 @@ function EventDetail() {
               text.muted
             }
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-              <line x1="4" y1="22" x2="4" y2="15" />
-            </svg>
+            <SignalIcon size={16} />
             <span className="text-xs">Signaler cet événement</span>
           </button>
         </div>

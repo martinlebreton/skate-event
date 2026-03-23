@@ -49,16 +49,7 @@ function OrgDetail() {
         <PageHeader
           back={
             <button onClick={() => navigate(-1)} className={backButton}>
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
+              <ChevronLeftIcon size={18} />
             </button>
           }
           actions={

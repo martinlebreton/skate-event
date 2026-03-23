@@ -5,9 +5,9 @@ export const pageTitle =
 export const heading = "text-lg font-bold tracking-tight " + text.title;
 export const subheading = "text-[15px] font-semibold " + text.title;
 export const cardTitle =
-  "text-[24px] font-bold tracking-tight " +
+  "text-4xl font-bold tracking-tight " +
   text.title +
-  " leading-snug text-balance";
+  " leading-tight text-balance";
 export const bodyText = "text-[15px] " + text.body + " leading-relaxed";
 export const smallText = "text-[13px] " + text.muted;
 export const hintText = "text-xs " + text.hint;

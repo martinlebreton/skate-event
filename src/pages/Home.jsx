@@ -10,6 +10,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { bg } from "../components/ui/designTokens";
 import Banner from "../components/ui/Banner";
 import LoadingState from "../components/ui/LoadingState";
+import { DarkIcon, LightIcon } from "../components/ui/icons";
 
 const PAGE_SIZE = 10;
 
@@ -104,32 +105,7 @@ function Home() {
       onClick={toggleDark}
       className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
     >
-      {dark ? (
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          className="text-slate-400"
-        >
-          <circle cx="12" cy="12" r="5" />
-          <path d="M12 3v1m0 16v1M4.22 4.22l.71.71m12.73 12.73.71.71M3 12h1m16 0h1M4.93 19.07l.71-.71M18.36 5.64l.71-.71" />
-        </svg>
-      ) : (
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          className="text-slate-400"
-        >
-          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
-        </svg>
-      )}
+      {dark ? <DarkIcon size={18} /> : <LightIcon size={18} />}
       <span className="text-[10px] font-medium text-slate-400">
         {dark ? "Light" : "Dark"}
       </span>
