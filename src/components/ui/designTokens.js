@@ -1,8 +1,8 @@
 export const text = {
-  title: "text-gray-950 dark:text-slate-100",
-  body: "text-gray-800 dark:text-slate-400",
-  muted: "text-slate-400 dark:text-slate-400",
-  hint: "text-slate-300 dark:text-slate-500",
+  title: "text-gray-950 dark:text-slate-100", // unifié gray-950
+  body: "text-gray-600 dark:text-slate-400",
+  muted: "text-slate-400 dark:text-slate-500", // unifié slate-400
+  hint: "text-slate-300 dark:text-slate-600",
   primary: "text-teal-600 dark:text-teal-400",
   danger: "text-red-500 dark:text-red-400",
 };
@@ -21,3 +21,16 @@ export const border = {
 };
 
 export const card = bg.surface + " " + border.base + " rounded-xl";
+
+// ── Nouveaux tokens ───────────────────────────────────────
+export const gap = {
+  list: "gap-4",
+  section: "gap-3",
+  inner: "gap-2.5",
+};
+
+export const padding = {
+  page: "px-3 pt-3 pb-28",
+  card: "px-4 py-3",
+  section: "px-4 py-4",
+};

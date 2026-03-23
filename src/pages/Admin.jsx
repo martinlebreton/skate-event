@@ -11,6 +11,7 @@ import OrgCard from "../components/cards/OrgCard";
 import EmptyState from "../components/ui/EmptyState";
 import DeleteModal from "../components/ui/DeleteModal";
 import { inputClass } from "../components/forms/formStyles";
+import LoadingState from "../components/ui/LoadingState";
 
 function Admin() {
   const navigate = useNavigate();
@@ -195,11 +196,8 @@ function Admin() {
           <>
             {mode === "list" && (
               <div className="space-y-3">
-                {loadingEvents && (
-                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
-                    Chargement...
-                  </p>
-                )}
+                {loadingEvents && <LoadingState />}
+
                 {!loadingEvents && eventsError && (
                   <EmptyState error={eventsError} />
                 )}
@@ -289,11 +287,8 @@ function Admin() {
           <>
             {mode === "list" && (
               <div className="space-y-3">
-                {loadingOrgs && (
-                  <p className="text-center text-sm text-gray-400 dark:text-slate-600">
-                    Chargement...
-                  </p>
-                )}
+                {loadingOrgs && <LoadingState />}
+
                 {!loadingOrgs && orgsError && <EmptyState error={orgsError} />}
                 {!loadingOrgs && !orgsError && organisateurs.length === 0 && (
                   <EmptyState icon="🏢" title="Aucun organisateur" />

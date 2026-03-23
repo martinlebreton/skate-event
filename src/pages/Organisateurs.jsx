@@ -7,6 +7,7 @@ import EmptyState from "../components/ui/EmptyState";
 import PageHeader from "../components/ui/PageHeader";
 import { bg } from "../components/ui/designTokens";
 import Banner from "../components/ui/Banner";
+import LoadingState from "../components/ui/LoadingState";
 
 function Organisateurs() {
   const { organisateurs, loading, fetchError } = useOrganisateurs();
@@ -73,11 +74,8 @@ function Organisateurs() {
           className="mb-1"
         />
 
-        {loading && (
-          <p className="text-center text-sm text-slate-400 dark:text-slate-600 mt-16">
-            Chargement...
-          </p>
-        )}
+        {loading && <LoadingState />}
+
         {!loading && fetchError && <EmptyState error={fetchError} />}
         {!loading && !fetchError && filtered.length === 0 && (
           <EmptyState

@@ -9,6 +9,7 @@ import EmptyState from "../components/ui/EmptyState";
 import PageHeader from "../components/ui/PageHeader";
 import { bg } from "../components/ui/designTokens";
 import Banner from "../components/ui/Banner";
+import LoadingState from "../components/ui/LoadingState";
 
 const PAGE_SIZE = 10;
 
@@ -170,11 +171,7 @@ function Home() {
         />
 
         {/* Chargement initial */}
-        {loading && (
-          <p className="text-center text-sm text-slate-400 dark:text-slate-600 mt-16">
-            Chargement...
-          </p>
-        )}
+        {loading && <LoadingState />}
 
         {/* Erreur */}
         {!loading && fetchError && <EmptyState error={fetchError} />}

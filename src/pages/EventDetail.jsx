@@ -2,18 +2,20 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { formatAgenda } from "../utils/dates";
-import { BADGE_EVENT_TYPE, BADGE_STATUT, BADGE_TARIF } from "../constants";
+import { BADGE_EVENT_TYPE, BADGE_TARIF } from "../constants";
 import {
   sectionLabel,
   sectionValue,
   sectionText,
   backButton,
 } from "../components/ui/typography";
-import { bg, text } from "../components/ui/designTokens";
+import { bg, text, card } from "../components/ui/designTokens";
 import PageHeader from "../components/ui/PageHeader";
 import { ShareButton } from "../components/ui/ActionButtons";
-import OrgCard from "../components/cards/OrgCard";
 import Lightbox from "../components/ui/Lightbox";
+import Divider from "../components/ui/Divider";
+import LoadingState from "../components/ui/LoadingState";
+import OrgCard from "../components/cards/OrgCard";
 
 function EventDetail() {
   const { id } = useParams();
@@ -37,23 +39,8 @@ function EventDetail() {
     setLoading(false);
   }
 
-  if (loading)
-    return (
-      <div
-        className={"flex items-center justify-center min-h-screen " + bg.page}
-      >
-        <p className={"text-sm " + text.muted}>Chargement...</p>
-      </div>
-    );
-
-  if (!event)
-    return (
-      <div
-        className={"flex items-center justify-center min-h-screen " + bg.page}
-      >
-        <p className={"text-sm " + text.muted}>Événement introuvable</p>
-      </div>
-    );
+  if (loading) return <LoadingState fullPage />;
+  if (!event) return <LoadingState fullPage text="Événement introuvable" />;
 
   const org = event.organisateurs;
 
@@ -63,10 +50,6 @@ function EventDetail() {
     { key: "infos_parking", label: "Parking", icon: "🅿️" },
     { key: "infos_sanitaire", label: "Sanitaires", icon: "🚻" },
   ].filter(({ key }) => !!event[key]);
-
-  const Divider = () => (
-    <div className="border-t border-gray-100 dark:border-slate-700" />
-  );
 
   return (
     <div className={"min-h-screen " + bg.page}>
@@ -125,7 +108,6 @@ function EventDetail() {
               loading="lazy"
               className="w-full h-full object-cover"
             />
-            {/* Indicateur zoom */}
             <div className="absolute bottom-2 right-2 bg-black/40 rounded-lg px-2 py-1 flex items-center gap-1">
               <svg
                 width="12"
@@ -196,13 +178,7 @@ function EventDetail() {
         </div>
 
         {/* Bloc infos */}
-        <div
-          className={
-            "rounded-xl overflow-hidden " +
-            bg.surface +
-            " border border-gray-200 dark:border-slate-700"
-          }
-        >
+        <div className={card + " overflow-hidden"}>
           <div className="px-4 py-3">
             <p className={sectionLabel}>Date</p>
             <p
@@ -222,7 +198,12 @@ function EventDetail() {
               {event.location}
               {event.ville ? ", " + event.ville : ""}
             </p>
+          </div>
 
+          <Divider />
+
+          <div className="px-4 py-3">
+            <p className={sectionLabel}>Région</p>
             <p className={sectionValue}>{event.region}</p>
           </div>
 
@@ -273,7 +254,6 @@ function EventDetail() {
         </div>
 
         {/* Organisateur */}
-        {/* Organisateur */}
         {org && (
           <div className="mt-4">
             <p className={sectionLabel + " px-1 mb-2"}>Organisé par</p>
@@ -289,7 +269,7 @@ function EventDetail() {
           <button
             onClick={() => navigate("/contact")}
             className={
-              "flex items-center gap-2 hover:text-red-400 dark:hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer " +
+              "flex items-center gap-2 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer " +
               text.muted
             }
           >

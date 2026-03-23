@@ -1,6 +1,7 @@
 import Badge from "../ui/Badge";
+import ContactBlock from "../ui/ContactBlock";
 import { text, card } from "../ui/designTokens";
-import { subheading, smallText, hintText } from "../ui/typography";
+import { subheading } from "../ui/typography";
 
 function OrgCard({ org, onClick, actions }) {
   return (
@@ -17,12 +18,8 @@ function OrgCard({ org, onClick, actions }) {
       <div className="p-4">
         <div className="flex items-start justify-between gap-2 mb-1">
           <div className="flex-1 min-w-0">
-            <div className="mb-2">
-              <Badge type="typeOrg" value={org.type_org} size="sm" />
-            </div>
             <p className={subheading + " truncate"}>{org.nom}</p>
-
-            <p className={"text-xs " + text.muted + " mt-0.5"}>
+            <p className={"text-xs mt-0.5 " + text.muted}>
               {org.ville ? org.ville : ""}
               {org.region ? (org.ville ? " · " : "") + org.region : ""}
             </p>
@@ -30,31 +27,22 @@ function OrgCard({ org, onClick, actions }) {
           <Badge type="statut" value={org.statut} size="sm" />
         </div>
 
+        <div className="mt-2 mb-3">
+          <Badge type="typeOrg" value={org.type_org} size="sm" />
+        </div>
+
         {org.description && (
           <p
             className={
-              "text-xs " + text.muted + " mt-2 line-clamp-2 leading-relaxed"
+              "text-xs mt-2 line-clamp-2 leading-relaxed " + text.muted
             }
           >
             {org.description}
           </p>
         )}
 
-        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-3">
-          {org.mail && (
-            <span
-              className={"text-xs " + text.muted + " flex items-center gap-1"}
-            >
-              ✉️ {org.mail}
-            </span>
-          )}
-          {org.tel && (
-            <span
-              className={"text-xs " + text.muted + " flex items-center gap-1"}
-            >
-              📞 {org.tel}
-            </span>
-          )}
+        <div className="mt-3">
+          <ContactBlock mail={org.mail} tel={org.tel} />
         </div>
       </div>
 
