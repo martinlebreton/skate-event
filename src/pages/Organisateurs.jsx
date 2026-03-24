@@ -4,10 +4,10 @@ import { useOrganisateurs } from "../hooks/useOrganisateurs";
 import { useEnums } from "../hooks/useEnums";
 import OrgCard from "../components/cards/OrgCard";
 import EmptyState from "../components/ui/EmptyState";
-import PageHeader from "../components/ui/PageHeader";
-import { bg } from "../components/ui/designTokens";
-import Banner from "../components/ui/Banner";
 import LoadingState from "../components/ui/LoadingState";
+import PageHeader from "../components/ui/PageHeader";
+import Banner from "../components/ui/Banner";
+import { bg } from "../components/ui/designTokens";
 
 function Organisateurs() {
   const { organisateurs, loading, fetchError } = useOrganisateurs();
@@ -49,9 +49,8 @@ function Organisateurs() {
       </div>
 
       <main className="px-3 pt-3 pb-28 min-h-screen">
-        {/* Bannière organisateurs */}
         <Banner
-          bg="bg-slate-200 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
+          bg="bg-slate-100 dark:bg-slate-800 text-gray-900 dark:text-slate-100"
           icon={
             <svg
               width="28"
@@ -68,14 +67,13 @@ function Organisateurs() {
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
           }
-          title="Partagez vos événements ?"
+          title="Vous organisez des événements ?"
           text="Rejoignez la communauté et faites connaître vos événements."
           onClick={() => navigate("/contact")}
-          className="mb-1"
+          className="mb-3"
         />
 
         {loading && <LoadingState />}
-
         {!loading && fetchError && <EmptyState error={fetchError} />}
         {!loading && !fetchError && filtered.length === 0 && (
           <EmptyState
@@ -85,12 +83,12 @@ function Organisateurs() {
           />
         )}
         {!loading && !fetchError && (
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-4">
             {filtered.map((org) => (
               <OrgCard
-                key={org.id}
+                key={org.org_id}
                 org={org}
-                onClick={(org) => navigate("/organisateurs/" + org.id)}
+                onClick={(org) => navigate("/organisateurs/" + org.org_id)}
               />
             ))}
           </div>

@@ -12,6 +12,7 @@ import PageHeader from "../components/ui/PageHeader";
 import { ShareButton } from "../components/ui/ActionButtons";
 import { bg, text, card } from "../components/ui/designTokens";
 import { backButton, heading, bodyText } from "../components/ui/typography";
+import { ChevronLeftIcon } from "../components/ui/icons";
 
 function OrgDetail() {
   const { id } = useParams();
@@ -23,7 +24,7 @@ function OrgDetail() {
     archives,
     loading: loadingEvents,
     error,
-  } = useEventsByOrganisateur(id);
+  } = useEventsByOrganisateur(org ? org.id : null);
 
   useEffect(() => {
     fetchOrg();
@@ -33,7 +34,7 @@ function OrgDetail() {
     const { data, error } = await supabase
       .from("organisateurs")
       .select("*")
-      .eq("id", id)
+      .eq("org_id", id)
       .single();
     if (error) console.error(error);
     else setOrg(data);
@@ -56,7 +57,7 @@ function OrgDetail() {
             <ShareButton
               title={org.nom}
               text={org.nom + " — " + org.type_org}
-              url={window.location.origin + "/organisateurs/" + org.id}
+              url={window.location.origin + "/organisateurs/" + org.org_id}
             />
           }
         />
@@ -90,13 +91,12 @@ function OrgDetail() {
           </div>
         </div>
 
-        {/* Chargement events */}
         {loadingEvents && <LoadingState text="Chargement des événements..." />}
         {!loadingEvents && error && <EmptyState error={error} />}
 
         {/* Prochains événements */}
         {!loadingEvents && !error && (
-          <div>
+          <div className="mt-6">
             <SectionTitle
               title="Prochains événements"
               count={upcoming.length}
@@ -123,7 +123,7 @@ function OrgDetail() {
 
         {/* Archives */}
         {!loadingEvents && !error && archives.length > 0 && (
-          <div>
+          <div className="mt-6">
             <SectionTitle
               title="Archives"
               count={archives.length}

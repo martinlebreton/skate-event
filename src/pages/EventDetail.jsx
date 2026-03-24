@@ -265,7 +265,7 @@ function EventDetail() {
             <p className={sectionLabel + " px-1 mb-2"}>Organisé par</p>
             <OrgCard
               org={org}
-              onClick={() => navigate("/organisateurs/" + org.id)}
+              onClick={() => navigate("/organisateurs/" + org.org_id)}
             />
           </div>
         )}
