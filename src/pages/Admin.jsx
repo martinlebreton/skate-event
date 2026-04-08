@@ -44,6 +44,7 @@ function Admin() {
   const [mode, setMode] = useState(initialMode);
   const [selected, setSelected] = useState(initialSelected);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [eventSubTab, setEventSubTab] = useState("upcoming");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -73,6 +74,11 @@ function Admin() {
     }
     setDeleteConfirm(null);
   }
+
+  // Filtrage des événements
+  const now = new Date();
+  const upcomingEvents = events.filter((event) => new Date(event.date) >= now);
+  const archivedEvents = events.filter((event) => new Date(event.date) < now);
 
   // ── Écran login ──
   if (!user)
@@ -155,6 +161,7 @@ function Admin() {
               onClick={() => {
                 setTab(t.key);
                 setMode("list");
+                if (t.key === "events") setEventSubTab("upcoming");
               }}
               className={
                 "px-4 py-2 rounded-xl text-sm font-medium transition-colors " +
@@ -191,6 +198,47 @@ function Admin() {
           </div>
         )}
 
+        {/* Sous-onglets Événements */}
+        {tab === "events" && mode === "list" && (
+          <div className="flex gap-2 mb-6">
+            {[
+              {
+                key: "upcoming",
+                label: "À venir",
+                count: upcomingEvents.length,
+              },
+              {
+                key: "archived",
+                label: "Archivés",
+                count: archivedEvents.length,
+              },
+            ].map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setEventSubTab(t.key)}
+                className={
+                  "relative px-4 py-2 rounded-xl text-sm font-medium transition-colors " +
+                  (eventSubTab === t.key
+                    ? "bg-gray-900 dark:bg-slate-100 text-white dark:text-slate-900"
+                    : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400")
+                }
+              >
+                {t.label}
+                <span
+                  className={
+                    "absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center " +
+                    (eventSubTab === t.key
+                      ? "bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100"
+                      : "bg-teal-600 text-white")
+                  }
+                >
+                  {t.count}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* ── EVENTS ── */}
         {tab === "events" && (
           <>
@@ -206,7 +254,10 @@ function Admin() {
                 )}
                 {!loadingEvents &&
                   !eventsError &&
-                  events.map((event) => (
+                  (eventSubTab === "upcoming"
+                    ? upcomingEvents
+                    : archivedEvents
+                  ).map((event) => (
                     <EventCard
                       key={event.id}
                       event={event}
