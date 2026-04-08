@@ -80,6 +80,10 @@ function Contact() {
             organisateurs. Les informations sont publiées à titre indicatif.
           </p>
 
+          <p className="mt-4 text-sm leading-relaxed text-center ">
+            Soutenez le développement de SkateEvent en m'offrant un café !
+          </p>
+
           {/* Bouton Buy me a coffee */}
           <p className="mt-4 ">
             <a
