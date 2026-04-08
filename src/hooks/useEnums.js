@@ -7,6 +7,7 @@ export function useEnums() {
   const [typesOrg, setTypesOrg] = useState([]);
   const [statutsOrg, setStatutsOrg] = useState([]);
   const [tarifs, setTarifs] = useState([]);
+  const [eventFormats, setEventFormats] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,11 +37,22 @@ export function useEnums() {
         setTarifs(
           data.filter((e) => e.enum_name === "event_tarif").map((e) => e.value),
         );
+        setEventFormats(
+          data.filter((e) => e.enum_name === "format").map((e) => e.value),
+        );
       }
       setLoading(false);
     }
     fetchEnums();
   }, []);
 
-  return { regions, types, typesOrg, statutsOrg, tarifs, loading };
+  return {
+    regions,
+    types,
+    typesOrg,
+    statutsOrg,
+    tarifs,
+    eventFormats,
+    loading,
+  };
 }

@@ -52,6 +52,7 @@ function EventDetail() {
   if (!event) return <LoadingState fullPage text="Événement introuvable" />;
 
   const org = event.organisateurs;
+  const eventFormat = event.format;
 
   const infosPratiques = [
     { key: "infos_bar", label: "Bar", icon: <BarIcon /> },
@@ -209,6 +210,13 @@ function EventDetail() {
           <div className="px-4 py-3">
             <p className={sectionLabel}>Région</p>
             <p className={sectionValue}>{event.region}</p>
+          </div>
+
+          <Divider />
+
+          <div className="px-4 py-3">
+            <p className={sectionLabel}>Format</p>
+            <p className={sectionValue}>{eventFormat}</p>
           </div>
 
           {event.description && (

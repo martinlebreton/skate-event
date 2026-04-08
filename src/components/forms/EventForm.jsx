@@ -20,6 +20,7 @@ export const EMPTY_EVENT = {
   infos_sanitaire: false,
   infos_complementaires: "",
   event_tarif: "",
+  format: "",
 };
 
 function EventForm({
@@ -30,7 +31,7 @@ function EventForm({
   types,
   organisateurs,
 }) {
-  const { tarifs } = useEnums();
+  const { tarifs, eventFormats } = useEnums();
   const [form, setForm] = useState(initial || EMPTY_EVENT);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -208,6 +209,33 @@ function EventForm({
           {tarifs.map((t) => (
             <option key={t} value={t}>
               {t}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className={labelClass}>Format</label>
+        <select
+          name="format"
+          value={form.format || ""}
+          onChange={handleChange}
+          className={inputClass}
+        >
+          <option value="">Sélectionne</option>
+          {(eventFormats.length > 0
+            ? eventFormats
+            : [
+                "Jam",
+                "Session libre",
+                "Contest",
+                "Compétition fédérale",
+                "Démo",
+                "Stage",
+              ]
+          ).map((format) => (
+            <option key={format} value={format}>
+              {format}
             </option>
           ))}
         </select>
