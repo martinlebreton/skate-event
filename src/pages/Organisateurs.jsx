@@ -21,13 +21,13 @@ function Organisateurs() {
 
   return (
     <div className={"min-h-screen " + bg.page}>
-      <div className="sticky top-0 z-40">
+      <div className="sticky top-0 z-40 md:top-16">
         <PageHeader
           title="ORGA"
           accent="NISATEURS"
           subtitle="Les organisateurs d'événements"
         />
-        <div className="flex gap-2 px-3 py-2.5 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
+        <div className="flex gap-2 px-3 md:px-6 py-2.5 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
           <select
             value={selectedRegion}
             onChange={(e) => setSelectedRegion(e.target.value)}
@@ -48,7 +48,7 @@ function Organisateurs() {
         </div>
       </div>
 
-      <main className="px-3 pt-3 pb-28 min-h-screen">
+      <main className="px-3 md:px-6 pt-3 pb-28 md:pb-8 min-h-screen">
         <Banner
           bg="bg-slate-100 dark:bg-slate-800 text-gray-900 dark:text-slate-100"
           icon={
@@ -70,7 +70,7 @@ function Organisateurs() {
           title="Vous organisez des événements ?"
           text="Rejoignez la communauté et faites connaître vos événements."
           onClick={() => navigate("/contact")}
-          className="mb-3"
+          className="mb-4"
         />
 
         {loading && <LoadingState />}
@@ -83,7 +83,7 @@ function Organisateurs() {
           />
         )}
         {!loading && !fetchError && (
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((org) => (
               <OrgCard
                 key={org.org_id}

@@ -65,34 +65,67 @@ function TabBar() {
   if (location.pathname === "/admin") return null;
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-stretch"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-    >
-      {tabs.map((tab) => {
-        const isActive = location.pathname === tab.path;
-        return (
-          <button
-            key={tab.path}
-            onClick={() => navigate(tab.path)}
-            className="flex-1 flex flex-col items-center justify-center gap-1 py-2.5 bg-transparent border-none cursor-pointer"
-          >
-            {tab.icon(isActive)}
-            <span
-              style={{
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: "0.3px",
-                color: isActive ? "#0d9488" : "#94a3b8",
-                fontFamily: "Inter, sans-serif",
-              }}
+    <>
+      {/* Desktop Navigation — Top NavBar */}
+      <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
+        <div className="max-w-6xl mx-auto w-full px-4 flex items-center justify-between h-16">
+          <div className="flex items-center gap-8">
+            <h1 className="font-bold text-teal-600 dark:text-teal-400 text-lg">
+              SkateEvent
+            </h1>
+            <div className="flex items-center gap-1">
+              {tabs.map((tab) => {
+                const isActive = location.pathname === tab.path;
+                return (
+                  <button
+                    key={tab.path}
+                    onClick={() => navigate(tab.path)}
+                    className={
+                      "px-4 py-2.5 text-sm font-medium rounded-lg transition-colors " +
+                      (isActive
+                        ? "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950"
+                        : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200")
+                    }
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Navigation — Bottom TabBar */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex items-stretch"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        {tabs.map((tab) => {
+          const isActive = location.pathname === tab.path;
+          return (
+            <button
+              key={tab.path}
+              onClick={() => navigate(tab.path)}
+              className="flex-1 flex flex-col items-center justify-center gap-1 py-2.5 bg-transparent border-none cursor-pointer"
             >
-              {tab.label}
-            </span>
-          </button>
-        );
-      })}
-    </nav>
+              {tab.icon(isActive)}
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: "0.3px",
+                  color: isActive ? "#0d9488" : "#94a3b8",
+                  fontFamily: "Inter, sans-serif",
+                }}
+              >
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
+      </nav>
+    </>
   );
 }
 

@@ -10,15 +10,19 @@ import TabBar from "./components/ui/TabBar";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/events/:id" element={<EventDetail />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/organisateurs" element={<Organisateurs />} />
-        <Route path="/organisateurs/:id" element={<OrgDetail />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
       <TabBar />
+      <main className="md:pt-16 md:pb-0 pb-16">
+        <div className="md:max-w-6xl md:mx-auto">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/events/:id" element={<EventDetail />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/organisateurs" element={<Organisateurs />} />
+            <Route path="/organisateurs/:id" element={<OrgDetail />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </div>
+      </main>
     </BrowserRouter>
   );
 }

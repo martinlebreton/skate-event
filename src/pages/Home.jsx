@@ -114,7 +114,7 @@ function Home() {
 
   return (
     <div className={"min-h-screen " + bg.page}>
-      <div className="sticky top-0 z-40">
+      <div className="sticky top-0 z-40 md:top-16">
         <PageHeader
           title="SKATE"
           accent="EVENT"
@@ -136,14 +136,14 @@ function Home() {
         />
       </div>
 
-      <main className="px-3 pt-3 pb-28 min-h-screen">
+      <main className="px-3 md:px-6 pt-3 pb-28 md:pb-8 min-h-screen">
         {/* Bannière bienvenue */}
         <Banner
           bg="bg-teal-600 dark:bg-teal-600 text-gray-100 dark:text-slate-100"
           icon="👋"
           title="Bienvenue sur SkateEvent"
           text="Retrouve les prochains contests et événements skate en France."
-          className="mb-1"
+          className="mb-4"
         />
 
         {/* Chargement initial */}
@@ -161,32 +161,34 @@ function Home() {
           />
         )}
 
-        {/* Liste */}
+        {/* Liste — Grille responsive */}
         {!loading && !fetchError && (
-          <div className="flex flex-col gap-4">
-            {events.map((event, index) => (
-              <div key={event.id} className="relative">
-                <EventCard
-                  event={event}
-                  index={index}
-                  onClick={(id) => navigate("/events/" + id)}
-                />
-                {user && (
-                  <button
-                    onClick={(e) => handleEdit(e, event)}
-                    className="absolute top-2 right-2 text-[10px] font-medium bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 px-2 py-1 rounded-lg hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors shadow-sm"
-                  >
-                    ✏️ Modifier
-                  </button>
-                )}
-              </div>
-            ))}
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {events.map((event, index) => (
+                <div key={event.id} className="relative">
+                  <EventCard
+                    event={event}
+                    index={index}
+                    onClick={(id) => navigate("/events/" + id)}
+                  />
+                  {user && (
+                    <button
+                      onClick={(e) => handleEdit(e, event)}
+                      className="absolute top-2 right-2 text-[10px] font-medium bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 px-2 py-1 rounded-lg hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors shadow-sm"
+                    >
+                      ✏️ Modifier
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
 
             {/* Sentinel — élément invisible qui déclenche le chargement */}
-            {hasMore && (
+            {hasMore && !loading && (
               <div
                 ref={sentinelRef}
-                className="h-8 flex items-center justify-center"
+                className="h-8 flex items-center justify-center mt-8"
               >
                 {loadingMore && (
                   <p className="text-sm text-slate-400 dark:text-slate-600">
@@ -202,7 +204,7 @@ function Home() {
                 — Tous les événements sont affichés —
               </p>
             )}
-          </div>
+          </>
         )}
       </main>
     </div>
