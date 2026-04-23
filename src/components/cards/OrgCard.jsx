@@ -42,7 +42,7 @@ function OrgCard({ org, onClick, actions }) {
         )}
 
         <div className="mt-3">
-          <ContactBlock mail={org.mail} tel={org.tel} />
+          <ContactBlock mail={org.mail} />
         </div>
       </div>
 

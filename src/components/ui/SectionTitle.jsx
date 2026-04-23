@@ -7,7 +7,7 @@ function SectionTitle({ title, count, countVariant = "teal", className = "" }) {
   return (
     <h2
       className={
-        "text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 px-1 flex items-center gap-2 " +
+        "text-l font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 px-1 flex items-center gap-2 " +
         className
       }
     >
@@ -15,7 +15,7 @@ function SectionTitle({ title, count, countVariant = "teal", className = "" }) {
       {count !== undefined && (
         <span
           className={
-            "px-2 py-0.5 rounded-full text-[10px] " +
+            "px-2 py-0.5 rounded-full text-l " +
             (countStyles[countVariant] || countStyles.teal)
           }
         >

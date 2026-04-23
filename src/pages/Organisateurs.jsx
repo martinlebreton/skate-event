@@ -15,9 +15,9 @@ function Organisateurs() {
   const [selectedRegion, setSelectedRegion] = useState("");
   const navigate = useNavigate();
 
-  const filtered = selectedRegion
-    ? organisateurs.filter((o) => o.region === selectedRegion)
-    : organisateurs;
+  const filtered = organisateurs
+    .filter((o) => o.statut === "Compte vérifié")
+    .filter((o) => !selectedRegion || o.region === selectedRegion);
 
   return (
     <div className={"min-h-screen " + bg.page}>
