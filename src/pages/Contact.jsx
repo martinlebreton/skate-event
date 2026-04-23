@@ -50,10 +50,10 @@ function Contact() {
             </p>
             <p className={"text-sm font-semibold " + text.primary}>
               <a
-                href={"mailto:contact.skateevent@gmail.com"}
+                href={"mailto:martinlebreton@gmail.com"}
                 className="hover:underline"
               >
-                contact.skateevent@gmail.com
+                martinlebreton@gmail.com
               </a>
             </p>
           </div>
