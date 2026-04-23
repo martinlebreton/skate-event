@@ -19,7 +19,7 @@ export const EMPTY_EVENT = {
   infos_parking: false,
   infos_sanitaire: false,
   infos_complementaires: "",
-  event_tarif: "",
+  event_tarif: "Gratuit",
   format: "",
 };
 
@@ -205,7 +205,6 @@ function EventForm({
           onChange={handleChange}
           className={inputClass}
         >
-          <option value="">Non renseigné</option>
           {tarifs.map((t) => (
             <option key={t} value={t}>
               {t}
