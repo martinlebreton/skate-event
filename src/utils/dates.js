@@ -18,8 +18,17 @@ export function formatJour(date) {
  * Ex: "14h00"
  */
 export function formatHeure(date) {
-  return new Date(date)
-    .toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+  if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+
+  // Supabase renvoie +00:00 mais la valeur est déjà en heure locale → on ignore le timezone
+  const stripped =
+    typeof date === "string" ? date.replace(/\+00:00$|Z$/, "") : date;
+
+  return new Date(stripped)
+    .toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
     .replace(":", "h");
 }
 
