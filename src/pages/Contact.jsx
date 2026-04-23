@@ -8,7 +8,7 @@ function Contact() {
       <PageHeader
         title="SKATE"
         accent="EVENT"
-        subtitle="Les événements skate en France"
+        subtitle="L'app des événements skate en France"
       />
 
       <main className="px-3 pt-8 pb-28 min-h-screen flex flex-col items-center justify-start gap-4">

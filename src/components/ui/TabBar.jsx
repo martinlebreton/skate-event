@@ -91,6 +91,11 @@ function TabBar() {
                   </button>
                 );
               })}
+              <div>
+                <p className="font-medium text-sm bg-teal-400 p-2  text-white dark:text-white rounded-lg">
+                  Passez à la version mobile !
+                </p>
+              </div>
             </div>
           </div>
         </div>

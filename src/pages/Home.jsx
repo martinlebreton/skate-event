@@ -118,7 +118,7 @@ function Home() {
         <PageHeader
           title="SKATE"
           accent="EVENT"
-          subtitle="Les événements skate en France"
+          subtitle="L'app des événements skate en France"
           left={
             <img
               src="/logo-skateevent.svg"
