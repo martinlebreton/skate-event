@@ -32,11 +32,7 @@ function OrgCard({ org, onClick, actions }) {
         </div>
 
         {org.description && (
-          <p
-            className={
-              "text-xs mt-2 line-clamp-2 leading-relaxed " + text.muted
-            }
-          >
+          <p className="text-xs mt-2 line-clamp-2 leading-relaxed ">
             {org.description}
           </p>
         )}

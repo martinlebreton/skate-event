@@ -87,21 +87,19 @@ function EventCard({ event, onClick, index = 0, actions }) {
             </span>
             {formattedTime && (
               <>
-                <span className={"text-[13px] " + text.hint}>·</span>
-                <span className={"text-[13px] " + text.muted}>
-                  {formattedTime}
-                </span>
+                <span className="text-sm ">·</span>
+                <span className="text-sm ">{formattedTime}</span>
               </>
             )}
           </div>
 
-          <p className={"text-[13px] leading-snug " + text.muted}>
+          <p className="text-sm leading-snug ">
             {event.location}
             {event.ville ? " · " + event.ville : ""}
           </p>
 
           {event.organisateurs?.nom && (
-            <p className={"text-[12px] " + text.muted}>
+            <p className="text-xs ">
               Organisé par{" "}
               <span className={"font-medium " + text.primary}>
                 {event.organisateurs.nom}

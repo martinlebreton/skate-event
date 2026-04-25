@@ -224,7 +224,7 @@ function EventDetail() {
               <Divider />
               <div className="px-4 py-3">
                 <p className={sectionLabel}>Description</p>
-                <p className={sectionText}>{event.description}</p>
+                <p className={sectionValue}>{event.description}</p>
               </div>
             </>
           )}
