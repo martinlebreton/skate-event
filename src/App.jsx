@@ -12,7 +12,7 @@ function App() {
     <BrowserRouter>
       <TabBar />
       <main className="md:pt-16 md:pb-0 pb-16">
-        <div className="md:max-w-6xl md:mx-auto">
+        <div className="md:mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/events/:id" element={<EventDetail />} />

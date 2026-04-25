@@ -5,17 +5,19 @@ import { bodyText } from "../components/ui/typography";
 function Contact() {
   return (
     <div className={"min-h-screen " + bg.page}>
-      <PageHeader
-        title="SKATE"
-        accent="EVENT"
-        subtitle="L'app des événements skate en France"
-      />
+      <div className="sticky top-0 z-40 md:top-16">
+        <PageHeader
+          title="SKATE"
+          accent="EVENT"
+          subtitle="L'app des événements skate en France"
+        />
+      </div>
 
-      <main className="px-3 pt-8 pb-28 min-h-screen flex flex-col items-center justify-start gap-4">
+      <main className="px-3 md:px-6 pt-3 pb-28 md:pb-8 min-h-screen flex flex-col items-center justify-start gap-4">
         {/* Card CTA */}
         <div
           className={
-            "w-full max-w-sm rounded-2xl border border-gray-200 dark:border-slate-700 p-8 flex flex-col items-center text-center gap-6 " +
+            "w-full max-w-sm md:max-w-md rounded-2xl border border-gray-200 dark:border-slate-700 p-8 flex flex-col items-center text-center gap-6 " +
             bg.surface
           }
         >
@@ -66,7 +68,7 @@ function Contact() {
         {/* Mentions légales */}
         <div
           className={
-            "w-full max-w-sm rounded-2xl border border-gray-200 dark:border-slate-700 p-6 " +
+            "w-full max-w-sm md:max-w-md rounded-2xl border border-gray-200 dark:border-slate-700 p-6 " +
             bg.surface
           }
         >
@@ -90,7 +92,7 @@ function Contact() {
               href={"https://buymeacoffee.com/martinlebreton"}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full max-w-sm flex items-center justify-center gap-2.5 py-3 px-6 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors"
+              className="w-full max-w-sm md:max-w-md flex items-center justify-center gap-2.5 py-3 px-6 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors"
             >
               <svg
                 width="20"

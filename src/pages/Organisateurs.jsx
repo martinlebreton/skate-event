@@ -27,7 +27,7 @@ function Organisateurs() {
           accent="NISATEURS"
           subtitle="Les organisateurs d'événements skate en France"
         />
-        <div className="flex gap-2 px-3 md:px-6 py-2.5 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
+        <div className=" flex gap-2 px-3 md:px-6 py-2.5 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 overflow-x-auto bg-hatch">
           <select
             value={selectedRegion}
             onChange={(e) => setSelectedRegion(e.target.value)}

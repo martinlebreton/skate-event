@@ -68,11 +68,8 @@ function TabBar() {
     <>
       {/* Desktop Navigation — Top NavBar */}
       <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
-        <div className="max-w-6xl mx-auto w-full px-4 flex items-center justify-between h-16">
-          <div className="flex items-center gap-8">
-            <h1 className="font-bold text-teal-600 dark:text-teal-400 text-lg">
-              SkateEvent
-            </h1>
+        <div className=" mx-auto w-full px-4 flex items-center justify-between h-16">
+          <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-1">
               {tabs.map((tab) => {
                 const isActive = location.pathname === tab.path;
@@ -91,11 +88,6 @@ function TabBar() {
                   </button>
                 );
               })}
-              <div>
-                <p className="font-medium text-sm bg-teal-400 p-2  text-white dark:text-white rounded-lg">
-                  Passez à la version mobile !
-                </p>
-              </div>
             </div>
           </div>
         </div>
