@@ -11,6 +11,7 @@ import { bg } from "../components/ui/designTokens";
 import Banner from "../components/ui/Banner";
 import LoadingState from "../components/ui/LoadingState";
 import { DarkIcon, LightIcon } from "../components/ui/icons";
+import TextEvenements from "../components/content/TextEvenements";
 
 const PAGE_SIZE = 10;
 
@@ -206,6 +207,7 @@ function Home() {
             )}
           </>
         )}
+        <TextEvenements />
       </main>
     </div>
   );

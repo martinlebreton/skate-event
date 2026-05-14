@@ -8,6 +8,7 @@ import LoadingState from "../components/ui/LoadingState";
 import PageHeader from "../components/ui/PageHeader";
 import Banner from "../components/ui/Banner";
 import { bg } from "../components/ui/designTokens";
+import TextOrganisateurs from "../components/content/TextOrganisateurs";
 
 function Organisateurs() {
   const { organisateurs, loading, fetchError } = useOrganisateurs();
@@ -93,6 +94,7 @@ function Organisateurs() {
             ))}
           </div>
         )}
+        <TextOrganisateurs />
       </main>
     </div>
   );
